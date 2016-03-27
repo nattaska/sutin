@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>
+	Kung</display-name>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+	
+  	<servlet>
+		<servlet-name>ReportControl</servlet-name>
+		<servlet-class>com.insurance.report.ReportControl</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+    	<servlet-name>ReportControl</servlet-name>
+		<url-pattern>/ReportControl</url-pattern>
+	</servlet-mapping>
+	
+  	<servlet>
+		<servlet-name>SummaryReport</servlet-name>
+		<servlet-class>com.insurance.report.SummaryReport</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+    	<servlet-name>SummaryReport</servlet-name>
+		<url-pattern>/SummaryReport</url-pattern>
+	</servlet-mapping>
+	
+  	<servlet>
+		<servlet-name>CheckingReport</servlet-name>
+		<servlet-class>com.insurance.report.CheckingReport</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+    	<servlet-name>CheckingReport</servlet-name>
+		<url-pattern>/CheckingReport</url-pattern>
+	</servlet-mapping>
+	
+  	<servlet>
+		<servlet-name>UploadFile</servlet-name>
+		<servlet-class>com.insurance.manage.UploadFile</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+    	<servlet-name>UploadFile</servlet-name>
+		<url-pattern>/UploadFile</url-pattern>
+	</servlet-mapping>
+</web-app>
