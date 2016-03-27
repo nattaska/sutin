@@ -1,0 +1,1061 @@
+<%@ page contentType="text/html; charset=tis-620" language="java" %>
+<%@ page import="java.util.*" %>
+<%@ page import="java.text.*"%>
+<%@ page import="com.insurance.entity.*" %> 
+<%@ page import="com.standard.util.*" %>
+<jsp:directive.page import="com.insurance.manage.ParameterManager"/>
+<% request.setCharacterEncoding("tis-620"); %>
+
+<%-- User Authentication --%>
+<jsp:useBean id="userBean" scope="session" class="com.insurance.manage.UserManager">
+<jsp:setProperty name="userBean" property="*"/>
+</jsp:useBean>
+<%
+if(!userBean.authenticated()){
+    response.sendRedirect("../login.jsp?url=setup/CustomerMultiMT.jsp");
+}
+%>
+<%-------------------------%>
+<jsp:useBean id="queryBean" scope="request" class="com.insurance.manage.CustomerManager"/>
+<%
+String action = request.getParameter("action");
+String subaction = request.getParameter("subaction");
+//if (subaction!=null && subaction.equals("findname")) 
+//	subaction=null;
+//String findname = request.getParameter("findname");
+%>
+
+<script language="JavaScript" type="text/JavaScript">
+	var hexChars = "0123456789ABCDEF";
+	
+	function Dec2Hex (Dec) {
+		var a = Dec % 16;
+		var b = (Dec - a)/16;
+		hex = "" + hexChars.charAt(b) + hexChars.charAt(a);
+		return hex;
+	}
+	
+	function thai(s){
+		s2='';
+		//alert(s);
+		for(var i=0;i<s.length;i++){
+			s2+="|"+s.charCodeAt(i);
+			//if(s.charCodeAt(i)>3423){
+			//	n=s.charCodeAt(i)-3424;
+			//	s2+='%'+Dec2Hex(n);
+			//}else{
+			//	s2+='%'+Dec2Hex(s.charCodeAt(i)); //s.charAt(i);
+			//}
+		}
+		return s2
+	} 
+	function listCust(returnPosition, name) {
+
+		winpopup = window.open('','popup','height=400,width=500,menubar=no,scrollbars=no,status=no,toolbar=no,screenX=100,screenY=100,left=100,top=100');
+		winpopup.document.write('<html>');
+		winpopup.document.write('<head><title>JSP Page</title></head>');
+		winpopup.document.write('<body>');
+		winpopup.document.write('<form name="list" action="../lov/CustLOV.jsp">');
+		winpopup.document.write('<input name="returnpos" type="hidden" value="'+returnPosition+'">');
+		winpopup.document.write('<input name="cname" id="cname" type="hidden" value="'+thai(name)+'">');
+		winpopup.document.write('<input name="first" id="first" type="hidden" value="'+1+'">');
+		winpopup.document.write('</form>');
+		winpopup.document.write('</body>');
+		winpopup.document.write('<script>document.list.submit();<\/script>');
+		winpopup.document.write('</html>');
+		winpopup.document.close();	
+	}
+	
+	function listLicense(license) {
+
+		winpopup = window.open('','popup','height=400,width=500,menubar=no,scrollbars=no,status=no,toolbar=no,screenX=100,screenY=100,left=100,top=100');
+		winpopup.document.write('<html>');
+		winpopup.document.write('<head><title>JSP Page</title></head>');
+		winpopup.document.write('<body>');
+		winpopup.document.write('<form name="list" action="../lov/LicenseLOV.jsp">');
+		winpopup.document.write('<input name="clicense" id="clicense" type="hidden" value="'+thai(license)+'">');
+		winpopup.document.write('<input name="first" id="first" type="hidden" value="'+1+'">');
+		winpopup.document.write('</form>');
+		winpopup.document.write('</body>');
+		winpopup.document.write('<script>document.list.submit();<\/script>');
+		winpopup.document.write('</html>');
+		winpopup.document.close();	
+	}
+	
+	function checkZipcode(zipObj){
+		  if(isInteger(zipObj))
+		  {
+		     zipObj.value = zipObj.value;
+	      } else {
+	      	zipObj.value = '';
+	      }
+	}
+	
+	function chkLicense(option,lObj,mObj,resetValue)
+	{
+		if(lObj.value=='') {
+			alert('กรุณาใส่ข้อมูลทะเบียนรถ');
+			mObj.value=resetValue;
+			if (option=='adddataform') {
+				if (document.adddataform.license1.value=='' || document.adddataform.license2.value=='') {
+					alert('กรุณาใส่ข้อมูลทะเบียนรถ');
+				}
+				document.adddataform.license.focus();
+			} else if (option=='editdataform'){
+				document.editdataform.license.focus();
+			}
+		}
+	}
+	
+	function checkLicense(option,pos)
+	{ 
+		if (option=='adddataform') {
+			if (document.adddataform.license1.value=='' && document.adddataform.license2.value=='') {
+				document.adddataform.elements["brand"].value='-1';
+				document.adddataform.elements["vat"].value='';
+				document.adddataform.elements["car"].value='';
+				document.adddataform.elements["ltype"].value='';
+				document.adddataform.elements["lcomp"].value='';
+				document.adddataform.elements["lact"].value='';
+				document.adddataform.license.value = '';
+			} else {
+				document.adddataform.license.value = document.adddataform.license1.value+'-'+document.adddataform.license2.value;
+				//if (document.adddataform.license1.value!='' && document.adddataform.license2.value=='') {
+				//	listLicense(document.adddataform.license1.value+'%-%');
+				//} else if (document.adddataform.license1.value=='' && document.adddataform.license2.value!='') {
+				//	listLicense('%-%'+document.adddataform.license2.value);
+				if (document.adddataform.license1.value!='' && document.adddataform.license2.value!='') {
+					listLicense(document.adddataform.license1.value+'%-%'+document.adddataform.license2.value);
+				}
+			}
+		} else if (option=='editdataform'){
+			if (pos=='') {
+				document.editdataform.elements["license"].value = document.editdataform.elements["license1"].value+'-'+document.editdataform.elements["license2"].value;
+				
+				if (document.editdataform.elements["license"].value=='-') {
+					document.editdataform.elements["brand"].value='-1';
+					document.editdataform.elements["vat"].value='';
+					document.editdataform.elements["car"].value='';
+					document.editdataform.elements["license"].value = '';
+					document.editdataform.elements["ltype"].value='-1';
+					document.editdataform.elements["lcomp"].value='-1';
+					document.editdataform.elements["lact"].value='-1';
+				}
+			} else {
+				document.editdataform.elements["elicense"+pos].value = document.editdataform.elements["elicense1"+pos].value+'-'+document.editdataform.elements["elicense2"+pos].value;
+				
+				if (document.editdataform.elements["elicense"+pos].value=='-') {
+					document.editdataform.elements["ebrand"+pos].value='-1';
+					document.editdataform.elements["evat"+pos].value='';
+					document.editdataform.elements["ecar"+pos].value='';
+					document.editdataform.elements["elicense"+pos].value = '';
+					document.editdataform.elements["eltype"+pos].value='-1';
+					document.editdataform.elements["elcomp"+pos].value='-1';
+					document.editdataform.elements["elact"+pos].value='-1';
+				}
+			}
+		}
+	}
+	
+	function addLicense(option,lObj,mObj,resetValue)
+	{
+		document.editdataform.elements["subaction"].value='addlicense';
+	}
+	function editLicense(pos)
+	{
+		document.editdataform.elements["subaction"].value='editlicense';
+		document.editdataform.elements["pos"].value=pos;
+	}
+	
+	function getDateShow(param) {
+		var tmpStr = document.getElementById(param).value.split("/");
+		document.getElementById(param).value=tmpStr[0]+"/"+tmpStr[1]+"/"+((tmpStr[2]*1)+543);
+	}
+</script>
+<html>
+<head>
+<title><jsp:include page="../title.jsp" /></title>
+<link href="../site.css" rel="stylesheet" type="text/css">
+<link type="text/css" rel="stylesheet" href="../script/dhtmlgoodies_calendar.css?random=20051112" media="screen"></link>
+</head>
+<script type='text/javascript' src='../script/scriptMobile.js'></script>
+<script type='text/javascript' src='../script/dhtmlgoodies_calendar.js'></script>
+<body onLoad="MM_preloadImages('../images/help_f2.gif')">
+<%
+
+String username = userBean.getUsername();
+User a = userBean.getUserEntity();
+System.out.println("action ===> "+action+"\tsubaction ===> "+subaction);
+
+if(action != null){
+	String msg = null;
+    if(subaction != null){
+        if(action.equals("add") && subaction.equals("insert"))
+        {
+        	Customer cust = new Customer();
+        	cust.setName(request.getParameter("custname"));
+        	cust.setPrefix(Integer.parseInt(request.getParameter("prefix")));
+        	cust.setTel(request.getParameter("tel"));
+        	cust.setAddress(request.getParameter("address"));
+        	cust.setProvince(Integer.parseInt(request.getParameter("provinceId")));
+        	String zipcode = request.getParameter("zipcode");
+        	cust.setZipCode((zipcode==null||zipcode.equals(""))?0:Integer.parseInt(zipcode));
+        	cust.setLicense(request.getParameter("license"));
+        	cust.setBrand(Integer.parseInt(request.getParameter("brand")));
+        	cust.setCar(request.getParameter("car"));
+        	cust.setLtype(Integer.parseInt(request.getParameter("ltype")));
+        	cust.setLcomp(Integer.parseInt(request.getParameter("lcomp")));
+        	cust.setLact(Integer.parseInt(request.getParameter("lact")));
+        	cust.setVat(request.getParameter("vat"));
+        	cust.setFire(request.getParameter("fire"));
+        	cust.setCreBy(username);
+        	cust.setUpdBy(username);
+            msg = queryBean.insertCustomer(cust);
+        }else if(action.equals("edit") && (subaction != null && !subaction.equals(""))) //(subaction.equals("update")||(subaction.equals("addlicense"))))
+        {
+        	if (subaction.equals("update")) {
+	        	Customer cust = new Customer(Integer.parseInt(request.getParameter("custId")));
+	        	cust.setPrefix(Integer.parseInt(request.getParameter("prefix")));
+	        	cust.setName(request.getParameter("custName"));
+	        	cust.setTel(request.getParameter("tel"));
+	        	cust.setAddress(request.getParameter("address"));
+	        	cust.setProvince(Integer.parseInt(request.getParameter("provinceId")));
+	        	String zipcode = request.getParameter("zipcode");
+	        	cust.setZipCode((zipcode==null||zipcode.equals(""))?0:Integer.parseInt(zipcode));
+	        	String fireid = request.getParameter("fireid");
+	        	cust.setFireId((fireid==null||fireid.equals(""))?0:Integer.parseInt(fireid));
+	        	cust.setLicense(request.getParameter("license"));
+	        	cust.setBrand(Integer.parseInt(request.getParameter("brand")));
+	        	cust.setCar(request.getParameter("car"));
+	        	cust.setVat(request.getParameter("vat"));
+	        	cust.setFire(request.getParameter("fire"));
+	        	cust.setCreBy(username);
+	        	cust.setUpdBy(username);
+	            msg = queryBean.updateCustomer(cust);
+	        } else if (subaction.equals("addlicense")) {
+	        	Customer cust = new Customer(Integer.parseInt(request.getParameter("custId")));
+	        	cust.setLicense(request.getParameter("license"));
+	        	cust.setBrand(Integer.parseInt(request.getParameter("brand")));
+	        	cust.setCar(request.getParameter("car"));
+	        	cust.setVat(request.getParameter("vat"));
+	        	cust.setLtype(Integer.parseInt(request.getParameter("ltype")));
+	        	cust.setLcomp(Integer.parseInt(request.getParameter("lcomp")));
+	        	cust.setLact(Integer.parseInt(request.getParameter("lact")));
+	        	cust.setCreBy(username);
+	        	cust.setUpdBy(username);
+	            msg = queryBean.insertLicense(cust);
+	        } else if (subaction.equals("editlicense")) {
+	        	Customer cust = new Customer(Integer.parseInt(request.getParameter("custId")));
+	        	cust.setLicense(request.getParameter("elicense"+request.getParameter("pos")));
+	        	cust.setBrand(Integer.parseInt(request.getParameter("ebrand"+request.getParameter("pos"))));
+	        	cust.setCar(request.getParameter("ecar"+request.getParameter("pos")));
+	        	cust.setVat(request.getParameter("evat"+request.getParameter("pos")));
+	        	cust.setLtype(Integer.parseInt(request.getParameter("eltype"+request.getParameter("pos"))));
+	        	cust.setLcomp(Integer.parseInt(request.getParameter("elcomp"+request.getParameter("pos"))));
+	        	cust.setLact(Integer.parseInt(request.getParameter("elact"+request.getParameter("pos"))));
+	        	cust.setCreBy(username);
+	        	cust.setUpdBy(username);
+	        	String oldlicense = request.getParameter("oldelicense"+request.getParameter("pos"));
+	            msg = queryBean.updateLicense(cust,oldlicense,queryBean.UPDATE);
+	        } else if (subaction.equals("delete")) {
+	        	Customer cust = new Customer(Integer.parseInt(request.getParameter("custId")));
+	        	cust.setLicense(request.getParameter("license"));
+        		msg = queryBean.deleteLicense(cust,Customer.CAR);
+	        }
+        }
+    }    // end subaction
+    if(action.equals("delete")){
+        Customer cust = new Customer(Integer.parseInt(request.getParameter("custId")));
+        //cust.setLicense(request.getParameter("license"));
+        msg = queryBean.deleteCustomer(cust);
+    }
+
+	if(msg != null){
+	
+		if (msg.indexOf(" License ") != -1) {
+%>
+	<meta http-equiv="refresh" content="1;URL=?action=edit&custId=<%= request.getParameter("custId") %>">
+		<% } else { %>
+<meta http-equiv="refresh" content="1;URL=?action=search&custId=<%= request.getParameter("custId") %>">
+		<% } %>
+<table width="500" height="200" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#8899FF">
+  <tr> 
+    <td> <table width="100%" height="200" border="0" cellspacing="1" cellpadding="5" valign="top" >
+        <tr> 
+          <td bgcolor="#D8D8C4" height="5%" align="center"> <span><b><jsp:include page="../title.jsp" /></b></span></td>
+        </tr>
+        <tr> 
+          <td bgcolor="#F6F6EB" align="left" valign="top"> <table width="100%" height="200" border="0" cellpadding="0" cellspacing="10" >
+              <tr> 
+                <td align="center"><%= msg %></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+<%
+	} // end msq != null
+}	// end action
+
+if(action == null || action.equals("search")){
+%>
+<table width="700" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#8899FF">
+  <tr> 
+    <td> <table width="100%" border="0" cellspacing="1" cellpadding="5" valign="top" >
+        <tr> 
+          <td align="center" bgcolor="#D8D8C4">
+              <jsp:include page="../toolbar.jsp" />
+              <span><b><jsp:include page="../title.jsp" /></b></span>
+			</td>
+        </tr>
+        <tr> 
+          <td bgcolor="#F6F6EB" align="left" valign="top"> <table width="100%" border="0" cellpadding="0" cellspacing="10" >
+              <tr> 
+                <td width="100" align="center"> <table width="700" border="0" cellpadding="0" cellspacing="2">
+                    <tr> 
+                      <td colspan="2" class="pagetitle">ลูกค้า</td>
+                    </tr>
+                    <tr> 
+                      <td width="60" align="center" bordercolor="#D8D8C4" bgcolor="#D8D8C4">ค้นหา</td>
+                      <td width="802" bordercolor="#D8D8C4">&nbsp;</td>
+                    </tr>
+                  </table>
+                  <table width="700" border="1" cellpadding="0" cellspacing="0" bordercolor="#D8D8C4">
+                    <tr> 
+                      <td bordercolor="#D8D8C4"> <form action="?" method="post" name="searchform" id="searchform">
+                          <table width="700" border="0" align="center" cellpadding="0" cellspacing="2">
+                            <tr class="lineborder"> 
+                              <td>
+                              	<table width="80%" border="0" align="center" cellpadding="0" cellspacing="2" height="50">
+                              		<tr width="100%" class="lineborder" > 
+		                              <td align="right"><font face="Microsoft Sans Serif">ชื่อลูกค้า </font></td>
+		                              <td><input name="custName" type="text" class="text" id="custName" size="20" maxlength="255" value="<%= (request.getParameter("custName")==null?"":request.getParameter("custName")) %>"></td>  
+		                              <td align="right"><font face="Microsoft Sans Serif">ทะเบียน </font></td>
+		                              <td><input name="slicense" type="text" class="text" id="slicense" size="10" maxlength="12" value="<%= (request.getParameter("slicense")==null?"":request.getParameter("slicense")) %>"></td>		                              	
+                              		</tr>
+                              		<tr width="100%" class="lineborder"> 
+										<%
+											String chkString[] = {"","","",""};
+											if(request.getParameter("typeins")!=null)
+											{
+												if(request.getParameter("typeins").equals("0"))
+													chkString[0] = "checked";
+												else if(request.getParameter("typeins").equals("1"))
+													chkString[1] = "checked";
+												else if(request.getParameter("typeins").equals("2"))
+													chkString[2] = "checked";
+												else if(request.getParameter("typeins").equals("3"))
+													chkString[3] = "checked";
+											} else {
+												chkString[0] = "checked";
+											}
+										%>
+                              			<td><input name="typeins" type="radio" value="0" <%=chkString[0]%>>All&nbsp;&nbsp;</td>
+                              			<td><input name="typeins" type="radio" value="1" <%=chkString[1]%>>ประกันอัคคีภัย</td>
+                              			<td><input name="typeins" type="radio" value="2" <%=chkString[2]%>>ประกันรถ</td>
+                              			<td><input name="typeins" type="radio" value="3" <%=chkString[3]%>>ภาษีรถ</td>
+		                            	</tr>  
+                              	</table>
+                              </td>
+                              <td width="30" align="right" rowspan="2">
+                              	<table width="39" border="0" align="center" cellpadding="0" cellspacing="2" height=50>
+                              		<tr align="center"><td>
+                              			<font face="Microsoft Sans Serif">จังหวัด</font> 
+                              		</td></tr>
+                              		<tr align="center"><td>
+                              			<font face="Microsoft Sans Serif">เดือน</font> 
+                              		</td></tr>
+                              	</table>
+                              </td>
+                              <td width="125"  rowspan="2"> 
+                              	<table width="39" border="0" align="center" cellpadding="0" cellspacing="2" height=50>
+                              		<tr align="center"><td>
+		                              <SELECT NAME="provinceId" SIZE="1" >
+		                              	<OPTION <%= (((action==null)||(request.getParameter("provinceId")==null)||(request.getParameter("provinceId").equals("-1")))?"SELECTED":"") %> 
+		                              			VALUE="-1" > - - - - - -   เลือกทั้งหมด   - - - - - - </OPTION>
+		                              	<%
+		  	                              	     ParameterManager manage = new ParameterManager();
+		  	                              	     ParameterDetail et = new ParameterDetail(1,2);
+		  	                              	     out.println(et.getTabId()+"  "+et.getParId());
+		  	                              	     Vector tabs = manage.getParamDetail(new ParameterDetail(1,-1));
+		  	                              	     for (int i=0;i<tabs.size();i++) {
+		  	                              	          ParameterDetail tab = (ParameterDetail)tabs.elementAt(i);
+		                              	%>
+		                            	<OPTION <%= (request.getParameter("provinceId")==null?"":((Integer.parseInt(request.getParameter("provinceId")) == tab.getParId())?"SELECTED":"")) %> 
+		                            		VALUE="<%= tab.getParId() %>" > <%= tab.getParName() %> </OPTION>
+		                            	<%  }
+		                              	%>
+		                              	</SELECT>
+		                              	</td></tr>
+                              		<tr align="center"><td>
+		                              <SELECT NAME="month" SIZE="1" >
+		                              	<OPTION <%= (((action==null)||(request.getParameter("month")==null)||(request.getParameter("month").equals("-1")))?"SELECTED":"") %> 
+		                              			VALUE="00" > - - - - - -   เลือกทั้งหมด   - - - - - - </OPTION>
+		                              	<%
+												for (int i=1;i<=12;i++) {
+		                              	%>
+		                            	<OPTION <%= (request.getParameter("month")==null?"":((Integer.parseInt(request.getParameter("month")) == i)?"SELECTED":"")) %> 
+		                            		VALUE="<%= ((i < 10)?("0"+i):(""+i)) %>" > <%= ((i < 10)?(StringUtil.toStringMonth("0"+i)):(StringUtil.toStringMonth(""+i))) %> </OPTION>
+		                            	<%  }
+		                              	%>
+		                              	</SELECT>
+                              		</td></tr>
+                              	</table>
+                              	</td>
+                              <td width="122"  align="center" rowspan="2"> <input name="submitsearch" type="submit" class="button" id="submitsearch" value="ค้นหา"> 
+                                <input name="action" type="hidden" id="action" value="search">
+                              </td>
+                            </tr>
+                          </table>
+                        </form></td>
+                    </tr>
+                  </table></td>
+              </tr>
+              <tr> 
+                <td align="left" bgcolor="#F6F6EB">
+                    <a href="?action=add" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('add','','../images/new_f2.gif',1)"><img src="../images/new.gif" alt="เพิ่มรายการ" name="add" width="24" height="24" hspace="0" vspace="0" border="0" id="add"></a> 
+                  </td>
+              </tr>
+              <tr> 
+                <td align="left" bgcolor="#F6F6EB"><table width="700" border="0" align="center" cellpadding="0" cellspacing="2">
+                    <tr align="center"> 
+                      <td width="3">ลำดับ</td>
+                      <td width="200">ชื่อลูกค้า</td>
+                      <td width="150">จังหวัด</td>
+                      <td width="130">ทะเบียนรถ</td>
+                      <td width="100">ประกันอัคคีภัย</td>
+                      <td width="100">ประกันรถ</td>
+                      <td width="100">ภาษีรถ</td>
+                      <td width="100">&nbsp;</td>
+                    </tr>
+                  </table></td>
+              </tr>
+              <tr valign="top"> 
+                <td align="center"><div scrollleft="0" scrolltop="0" align="left" style="border: 1px solid;border-color:#D8D8C4;OVERFLOW: scroll; WIDTH: 100%; HEIGHT: 200;background-color:#F6F6EB;"> 
+<%
+		if(action != null && action.equals("search")){
+%>
+    <table width="700" border="1" align="center" cellpadding="0" cellspacing="0" bordercolor="#D8D8C4">      
+      <%
+	try{
+		Customer cust = new Customer();
+		int typeins = request.getParameter("typeins")==null?0:Integer.parseInt(request.getParameter("typeins"));
+		cust.setName(request.getParameter("custName"));
+//		int custId = request.getParameter("custId")==null?-1:Integer.parseInt(request.getParameter("custId"));
+		String month = request.getParameter("month");
+		cust.setLicense(request.getParameter("slicense"));
+		cust.setProvince(request.getParameter("provinceId")==null?0:Integer.parseInt(request.getParameter("provinceId")));
+	    //cust.setActive(Integer.parseInt(request.getParameter("active") == null ? "0" : request.getParameter("active")));
+		//System.out.println(cust.getCustId()+"\t"+cust.getFirstName()+" "+cust.getLastName());
+	      Vector entities = queryBean.searchCustomerPage(cust,typeins,month);
+
+	      for(int i = 0;i < entities.size();i++){
+	          Customer entity = (Customer)entities.elementAt(i);
+	      %>
+      <tr> 
+        <td width="50" align="right"><%= (i+1) %></td>
+        <td width="200"><%= entity.getPrefixName() + ShowData.CheckNull(entity.getName(),"-") %></td>
+        <td width="150" align="center"><%= ShowData.CheckNull(entity.getProvinceName(),"-") %></td>
+        <td width="130" align="center"><%= ShowData.CheckNull(entity.getLicense(),"-") %></td>
+        <td width="100" align="center"><%= ShowData.CheckNull(entity.getFire(),"-") %></td>
+        <td width="100" align="center"><%= ShowData.CheckNull(entity.getCar(),"-") %></td>
+        <td width="100" align="center"><%= ShowData.CheckNull(entity.getVat(),"-") %></td>
+        <td width="100" align="center"> 
+        <table width="100%" border="0" cellpadding="0" cellspacing="2">
+            <tr align="center"> 
+              <td>
+                  <a href="?action=edit&custId=<%= entity.getCustId() %>" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('edit<%= i %>','','../images/edit_f2.gif',1)" ><img src="../images/edit.gif" alt="แก้ไข" name="edit<%= i %>" width="24" height="24" hspace="0" vspace="0" border="0" id="edit<%= i %>"></a> 
+              </td>
+              <td>
+                  <a href="#" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('delete<%= i %>','','../images/delete_f2.gif',1)" onClick="if(confirmDelete('<%= (entity.getPrefixName() + entity.getName()) %>')) MM_goToURL('parent','?action=delete&custId=<%= entity.getCustId() %>')"><img src="../images/delete.gif" alt="ลบ" name="delete<%= i %>" width="24" height="24" hspace="0" vspace="0" border="0" id="delete<%= i %>"></a> 
+                </td>
+            </tr>
+          </table></td>
+      </tr>
+      	<%
+    		}
+    	}catch(com.standard.STDException e){
+    		e.printStackTrace();
+    	}
+    
+    	%>
+    </table>
+<%
+		}
+%>
+                  </div></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+<%
+} else if(action.equals("add") && (subaction == null)){
+%>
+<table width="700" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#8899FF">
+  <tr> 
+    <td> <table width="100%" border="0" cellspacing="1" cellpadding="5" valign="top" >
+        <tr> 
+          <td align="center" bgcolor="#D8D8C4">
+              <jsp:include page="../toolbar.jsp" />
+              <span><b><jsp:include page="../title.jsp" /></b></span>
+			</td>
+        </tr>
+        <tr> 
+          <td bgcolor="#F6F6EB" align="left" valign="top"> <table width="100%" border="0" cellpadding="0" cellspacing="10" >
+              <tr> 
+                <td width="100" align="center"> <table width="700" border="0" cellpadding="0" cellspacing="2">
+                    <tr> 
+                      <td colspan="2" class="pagetitle">ลูกค้า</td>
+                    </tr>
+                    <tr> 
+                      <td width="60" align="center" bordercolor="#D8D8C4" bgcolor="#D8D8C4">เพิ่มข้อมูล</td>
+                      <td width="802" bordercolor="#D8D8C4">&nbsp;</td>
+                    </tr>
+                  </table>
+                  <table width="700" border="1" cellpadding="0" cellspacing="0" bordercolor="#D8D8C4">
+                    <tr> 
+                      <td bordercolor="#D8D8C4"> <form action="?" method="post" name="adddataform" id="adddataform">
+                          <table width="700" border="0" cellpadding="0" cellspacing="2">
+                            <tr class="lineborder"> 
+                              <td width="20%" align="right"><font color="#FF0000">*</font> <font face="Microsoft Sans Serif">ชื่อลูกค้า</font></td>
+                              <td width="70%">                               
+		                              <SELECT NAME="prefix" SIZE="1" >
+		                              	<%
+		  	                              	     ParameterManager manage = new ParameterManager();
+		  	                              	     //ParameterDetail et = new ParameterDetail(1,2);
+		  	                              	     //out.println(et.getTabId()+"  "+et.getParId());
+		  	                              	     Vector prefixs = manage.getParamDetail(new ParameterDetail(3,-1));
+		  	                              	     for (int i=0;i<prefixs.size();i++) {
+		  	                              	          ParameterDetail prefix = (ParameterDetail)prefixs.elementAt(i);
+		                              	%>
+		                            	<OPTION <%= (request.getParameter("prefix")==null?"":((Integer.parseInt(request.getParameter("prefix")) == prefix.getParId())?"SELECTED":"")) %> 
+		                            		VALUE="<%= prefix.getParId() %>" > <%= prefix.getParName() %> </OPTION>
+		                            	<%  }
+		                              	%>
+		                              	</SELECT>
+		                              	<input name="custname" type="text" class="text" id="custname" size="50" maxlength="100" value="" onchange="listCust('adddataform',adddataform.custname.value)"> 		                              	 
+                              	 <!--a href="#" onclick="listCust('adddataform',adddataform.custname.value)"> เช็คชื่อ  </a> -->
+                              	</td>                          
+                              <td width="10%" nowrap>&nbsp;</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                              <td align="right" nowrap><font face="Microsoft Sans Serif">เบอร์ติดต่อ </font></td>
+                              <td><input name="tel" type="text" class="text" id="tel" size="50" maxlength="50"></td>
+                              <td>&nbsp;</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                              <td align="right" valign="top" nowrap><font face="Microsoft Sans Serif">ที่อยู่ </font></td>
+                              <td><textarea cols="40" rows="5" name="address" type="text" class="text" value="" ></textarea></td>
+                              <td>&nbsp;</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                              <td align="right" nowrap><font face="Microsoft Sans Serif">จังหวัด </font></td>
+                              <td>
+		                              <SELECT NAME="provinceId" SIZE="1" >
+		                              	<OPTION <%= (((subaction==null)||(request.getParameter("provinceId").equals("-1")))?"SELECTED":"") %> 
+		                              			VALUE="-1" > - - -   เลือกจังหวัด   - - - </OPTION>
+		                              	<%
+		  	                              	     //ParameterManager manage = new ParameterManager();
+		  	                              	     //ParameterDetail et = new ParameterDetail(1,2);
+		  	                              	     //out.println(et.getTabId()+"  "+et.getParId());
+		  	                              	     Vector tabs = manage.getParamDetail(new ParameterDetail(1,-1));
+		  	                              	     for (int i=0;i<tabs.size();i++) {
+		  	                              	          ParameterDetail tab = (ParameterDetail)tabs.elementAt(i);
+		                              	%>
+		                            	<OPTION <%= (request.getParameter("provinceId")==null?"":((Integer.parseInt(request.getParameter("provinceId")) == tab.getParId())?"SELECTED":"")) %> 
+		                            		VALUE="<%= tab.getParId() %>" > <%= tab.getParName() %> </OPTION>
+		                            	<%  }
+		                              	%>
+		                              	</SELECT></td>
+                              <td>&nbsp;</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                              <td align="right" nowrap><font face="Microsoft Sans Serif">รหัสไปรษณีย์ </font></td>
+                              <td><input name="zipcode" type="number" class="number" id="zipcode" size="10" maxlength="5" onchange="checkZipcode(adddataform.zipcode)"></td>                              
+                              <td>&nbsp;</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td colspan="3" align="center"></td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td colspan="3" align="center" bgcolor="#D8D8C4">
+                            		<b>ประกันภัยรถ<b>
+                            	</td>
+                            </tr>
+                            <tr class="lineborder" bordercolor="black" background="gray"> 
+                            	<td colspan="3" align="center"></td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td colspan="3" > ทะเบียนรถ</td>
+                            </tr>
+                            <tr class="lineborder" > 
+                              <td > 
+                              <input name="license1" type="text" class="text" id="license1" size="3" maxlength="3"  onchange="checkLicense('adddataform')">
+                              - <input name="license2" type="text" class="text" id="license2" size="5" maxlength="4"  onchange="checkLicense('adddataform')">
+                              <input name="license" type="hidden" class="text" id="license" size="15" maxlength="10" ></td>                          
+                              <td align="left" colspan="2">
+	                              <SELECT NAME="brand" SIZE="1" onchange="chkLicense('adddataform',adddataform.license,adddataform.brand,'-1')">
+	                              	<OPTION <%= (((subaction==null)||(request.getParameter("brand").equals("-1")))?"SELECTED":"") %> 
+	                              			VALUE="-1" > - - -   เลือกยี่ห้อรถ   - - - </OPTION>
+	                              	<%
+	  	                              	     manage = new ParameterManager();
+	  	                              	     Vector brands = manage.getParamDetail(new ParameterDetail(2,-1));
+	  	                              	     for (int i=0;i<brands.size();i++) {
+	  	                              	          ParameterDetail ebrand = (ParameterDetail)brands.elementAt(i);
+	                              	%>
+	                            	<OPTION <%= (request.getParameter("brand")==null?"":((Integer.parseInt(request.getParameter("brand")) == ebrand.getParId())?"SELECTED":"")) %> 
+	                            		VALUE="<%= ebrand.getParId() %>" > <%= ebrand.getParName() %> </OPTION>
+	                            	<%  }
+	                              	%>
+	                              	</SELECT>
+	                            	 ประกันภัย<input type="text" value="" class="disabletext" readonly name="car" id="car" onfocus="displayCalendar(document.adddataform.car,'dd/mm/yyyy',this)" onchange="getDateShow('car')">
+	                              	ภาษี<input type="text" value="" class="disabletext" readonly name="vat" id="vat" onfocus="displayCalendar(document.adddataform.vat,'dd/mm/yyyy',this)" onchange="getDateShow('vat')">                              	
+	                            </td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td></td>
+                            	<td colspan="2">
+                              <SELECT NAME="ltype" SIZE="1">
+                              	<OPTION "SELECTED" VALUE="-1" > - - -   เลือกประเภทประกัน   - - - </OPTION>                              	<%
+  	                              	     Vector types = manage.getParamDetail(new ParameterDetail(4,-1));
+  	                              	     for (int i=0;i<types.size();i++) {
+  	                              	          ParameterDetail etype = (ParameterDetail)types.elementAt(i);
+                              	%>
+                            	<OPTION VALUE="<%= etype.getParId() %>" > <%= etype.getParName() %> </OPTION>
+                            	<%  } %>
+                              	</SELECT>
+                              <SELECT NAME="lcomp" SIZE="1">
+                              	<OPTION "SELECTED" VALUE="-1" > - - -   เลือกบริษัทประกัน   - - - </OPTION>                              	<%
+  	                              	     Vector comps = manage.getParamDetail(new ParameterDetail(5,-1));
+  	                              	     for (int i=0;i<comps.size();i++) {
+  	                              	          ParameterDetail ecomp = (ParameterDetail)comps.elementAt(i);
+                              	%>
+                            	<OPTION VALUE="<%= ecomp.getParId() %>" > <%= ecomp.getParName() %> </OPTION>
+                            	<%  } %>
+                              	</SELECT>
+                              	</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td></td>
+                            	<td>
+	                              <SELECT NAME="lact" SIZE="1">
+	                              	<OPTION "SELECTED" VALUE="-1" > - - -  เลือกบริษัท พ.ร.บ.  - - - </OPTION>                              	<%
+	  	                              	     Vector acts = manage.getParamDetail(new ParameterDetail(6,-1));
+	  	                              	     for (int i=0;i<acts.size();i++) {
+	  	                              	          ParameterDetail eact = (ParameterDetail)acts.elementAt(i);
+	                              	%>
+	                            	<OPTION VALUE="<%= eact.getParId() %>" > <%= eact.getParName() %> </OPTION>
+	                            	<%  }%>
+	                              	</SELECT> 
+	                              	&nbsp;&nbsp;  พ.ร.บ. <input type="text" value="" class="disabletext" readonly name="act" id="act" onfocus="displayCalendar(document.adddataform.act,'dd/mm/yyyy',this)" onchange="getDateShow('act')">    
+                              	</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td colspan="3"></td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td colspan="3" align="center" bgcolor="#D8D8C4">
+                            		<b>ประกันอัคคีภัย<b>
+                            	</td>
+                            </tr>
+                            <tr class="lineborder" bordercolor="black" background="gray"> 
+                            	<td colspan="3" align="center"></td>
+                            </tr>
+                            <tr class="lineborder"> 
+                              <td align="center">ประกันอัคคีภัย</td>                            	                       
+                              <td width="15%" align="left"> 
+                              <input type="text" value="" class="disabletext" readonly name="fire" id="fire" onfocus="displayCalendar(document.adddataform.fire,'dd/mm/yyyy',this)" onchange="getDateShow('fire')"></td>
+                            	<td>&nbsp;</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                              <td></td>
+                              <td>
+                              	<input name="submitadd" type="submit" class="button" id="submitadd" onClick="MM_validateForm('custname','ชื่อ','R','address','ที่อยู่','R');return document.MM_returnValue" value="  เพิ่ม  "> 
+                              	<input name="custId" type="hidden" id="custId" value=""> 
+                              	<input name="action" type="hidden" id="action" value="add"> 
+                              	<input name="subaction" type="hidden" id="subaction" value="insert">
+                              	<input name="cancel" type="button" class="button" id="cancel" onClick="window.history.back()" value="ยกเลิก"></td>
+                              <td>&nbsp;</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                              <td colspan="3">&nbsp;</td>
+                            </tr>
+                          </table>
+                        </form></td>
+                    </tr>
+                  </table></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+<%
+}else if(action.equals("edit") && (subaction == null)){
+%>
+<table width="700" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#8899FF">
+  <tr> 
+    <td> <table width="100%" border="0" cellspacing="1" cellpadding="5" valign="top" >
+        <tr> 
+          <td align="center" bgcolor="#D8D8C4">
+              <jsp:include page="../toolbar.jsp" />
+              <span><b><jsp:include page="../title.jsp" /></b></span>
+			</td>
+        </tr>
+        <tr> 
+          <td bgcolor="#F6F6EB" align="left" valign="top"> <table width="100%" border="0" cellpadding="0" cellspacing="10" >
+              <tr> 
+                <td width="100" align="center"> <table width="700" border="0" cellpadding="0" cellspacing="2">
+                    <tr> 
+                      <td colspan="2" class="pagetitle">ลูกค้า</td>
+                    </tr>
+                    <tr> 
+                      <td width="73" align="center" bordercolor="#D8D8C4" bgcolor="#D8D8C4">แก้ไขข้อมูล</td>
+                      <td width="621" bordercolor="#D8D8C4">&nbsp;</td>
+                    </tr>
+                  </table>
+                  <%
+                  try{
+					Customer cust = new Customer(Integer.parseInt(request.getParameter("custId")));
+				//cust.setActive(Integer.parseInt(request.getParameter("active")));
+	                Vector entities = queryBean.getCustomer(cust);
+	                if(entities.size() > 0){
+	                    Customer entity = (Customer)entities.elementAt(0);
+	                   // System.out.println("Address = "+entity.getAddress()+"\tActive = "+entity.isActive());
+                    String statusStr = "";
+                    String statusValue = "";
+                %> <table width="700" border="1" cellpadding="0" cellspacing="0" bordercolor="#D8D8C4">
+                    <tr> 
+                      <td bordercolor="#D8D8C4"> <form action="?" method="post" name="editdataform" id="editdataform">
+                          <table width="700" border="0" align="center" cellpadding="0" cellspacing="2">
+                            <tr class="lineborder"> 
+                              <td width="20%" align="right"><font color="#FF0000">*</font> <font face="Microsoft Sans Serif">ชื่อลูกค้า</font></td>
+                              <td width="70%"> 
+		                              <SELECT NAME="prefix" SIZE="1" >
+		                              	<%
+		  	                              	     ParameterManager manage = new ParameterManager();
+		  	                              	     //ParameterDetail et = new ParameterDetail(1,2);
+		  	                              	     //out.println(et.getTabId()+"  "+et.getParId());
+		  	                              	     Vector prefixs = manage.getParamDetail(new ParameterDetail(3,-1));
+		  	                              	     for (int i=0;i<prefixs.size();i++) {
+		  	                              	          ParameterDetail prefix = (ParameterDetail)prefixs.elementAt(i);
+		                              	%>
+		                            	<OPTION <%= (entity.getPrefix()==0?"":((entity.getPrefix() == prefix.getParId())?"SELECTED":"")) %> 
+		                            		VALUE="<%= prefix.getParId() %>" > <%= prefix.getParName() %> </OPTION>
+		                            	<%  }
+		                              	%>
+		                              	</SELECT>
+                              <input name="custName" type="text" class="text" id="custName" size="50" maxlength="100" value="<%= ShowData.CheckNull(entity.getName()) %>"></td>                          
+                              <td width="10%" nowrap>&nbsp;</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                              <td align="right" nowrap><font face="Microsoft Sans Serif">เบอร์ติดต่อ </font></td>
+                              <td><input name="tel" type="text" class="text" id="tel" value="<%=ShowData.CheckNull(entity.getTel())%>" size="30" maxlength="200">                              
+                              <td>&nbsp;</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                              <td align="right" valign="top" nowrap><font face="Microsoft Sans Serif">ที่อยู่ </font></td>
+                              <td><textarea cols="40" rows="5" name="address" type="text" class="text"><%=entity.getAddress()%></textarea></td>
+                              <td>&nbsp;</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                              <td align="right" nowrap><font face="Microsoft Sans Serif">จังหวัด </font></td>
+                              <td>
+		                              <SELECT NAME="provinceId" SIZE="1" >
+		                              	<OPTION <%= (((entity.getProvince()==0))?"SELECTED":"") %> 
+		                              			VALUE="-1" > - - -   เลือกจังหวัด   - - - </OPTION>
+		                              	<%
+		  	                              	     //ParameterManager manage = new ParameterManager();
+		  	                              	     //ParameterDetail et = new ParameterDetail(1,2);
+		  	                              	     //out.println(et.getTabId()+"  "+et.getParId());
+		  	                              	     Vector tabs = manage.getParamDetail(new ParameterDetail(1,-1));
+		  	                              	     for (int i=0;i<tabs.size();i++) {
+		  	                              	          ParameterDetail tab = (ParameterDetail)tabs.elementAt(i);
+		                              	%>
+		                            	<OPTION <%= (entity.getProvince()==0?"":((entity.getProvince() == tab.getParId())?"SELECTED":"")) %> 
+		                            		VALUE="<%= tab.getParId() %>" > <%= tab.getParName() %> </OPTION>
+		                            	<%  }
+		                              	%>
+		                              	</SELECT></td>
+                              <td>&nbsp;</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                              <td align="right" nowrap><font face="Microsoft Sans Serif">รหัสไปรษณีย์ </font></td>
+                              <td><input name="zipcode" type="number" class="number" id="zipcode" size="10" maxlength="5" value="<%= entity.getZipCode()==0?"":entity.getZipCode() %>" onchange="checkZipcode(editdataform.zipcode)"></td>
+                              <td>&nbsp;</td>
+                            </tr>                            
+                            <tr class="lineborder"> 
+                            	<td colspan="3"></td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td colspan="3" align="center" bgcolor="#D8D8C4">
+                            		<b>ประกันอัคคีภัย<b>
+                            	</td>
+                            </tr>
+                            <tr class="lineborder" bordercolor="black" background="gray"> 
+                            	<td colspan="3" align="center"></td>
+                            </tr>
+                            <tr class="lineborder"> 
+                              <td align="center">ประกันอัคคีภัย</td>
+                              <td width="15%" align="left"> 
+                              	<input name="fireid" type="hidden" id=""fireid"" value="<%=entity.getFireId() %>"> 
+                              <input type="text" value="<%= ShowData.CheckNull(entity.getFire()) %>" class="disabletext" readonly name="fire" id="fire" onfocus="displayCalendar(document.editdataform.fire,'dd/mm/yyyy',this)" onchange="getDateShow('fire')"></td>
+                            	<td>&nbsp;</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td colspan="3" align="center"></td>
+                            </tr>
+                            <tr class="lineborder"> 
+                              <td align="right">
+                              	<input name="custId" type="hidden" id="custId" value="<%=entity.getCustId() %>"> 
+                              	<input name="submitsedit" type="submit" class="button" id="submitsedit2" onClick="MM_validateForm('custname','ชื่อ','R','address','ที่อยู่','R');return document.MM_returnValue" value="แก้ไข"> 
+                              	<input name="action" type="hidden" id="action" value="edit"> 
+                              	<input name="subaction" type="hidden" id="subaction" value="update">
+                              	<input name="pos" type="hidden" id="pos" value="">
+                              </td>
+                              <td>&nbsp;
+                              	<input name="cancel" type="button" class="button" id="cancel" onClick="window.history.back()" value="ยกเลิก"></td>                              
+                              <td>&nbsp;</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td colspan="3" align="center"></td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td colspan="3" align="center" bgcolor="#D8D8C4">
+                            		<b>ประกันภัยรถ<b>
+                            	</td>
+                            </tr>
+                            <tr class="lineborder" bordercolor="black" background="gray"> 
+                            	<td colspan="3" align="center"></td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td colspan="3" > ทะเบียนรถ</td>
+                            </tr>
+                            <tr class="lineborder" > 
+                              <td > 
+                              <input name="license1" type="text" class="text" id="license1" size="3" maxlength="3"  onchange="checkLicense('editdataform','')">
+                              - <input name="license2" type="text" class="text" id="license2" size="5" maxlength="4"  onchange="checkLicense('editdataform','')">
+                              <input name="license" type="hidden" class="text" id="license" size="15" maxlength="10" ></td>                          
+                              <td align="left">
+                              <SELECT NAME="brand" SIZE="1" onchange="chkLicense('editdataform',editdataform.license,editdataform.brand,'-1')">
+                              	<OPTION <%= (((subaction==null)||(request.getParameter("brand").equals("-1")))?"SELECTED":"") %> 
+                              			VALUE="-1" > - - -   เลือกยี่ห้อรถ   - - - </OPTION>
+                              	<%
+                              	//System.out.println("Brand");
+  	                              	     manage = new ParameterManager();
+  	                              	    // et = new ParameterDetail(2);
+  	                              	     Vector brands = manage.getParamDetail(new ParameterDetail(2,-1));
+  	                              	     for (int i=0;i<brands.size();i++) {
+  	                              	          ParameterDetail ebrand = (ParameterDetail)brands.elementAt(i);
+                              	%>
+                            	<OPTION <%= (request.getParameter("brand")==null?"":((Integer.parseInt(request.getParameter("brand")) == ebrand.getParId())?"SELECTED":"")) %> 
+                            		VALUE="<%= ebrand.getParId() %>" > <%= ebrand.getParName() %> </OPTION>
+                            	<%  }
+                              	%>
+                              	</SELECT>
+                            	 ประกันภัย<input type="text" value="" class="disabletext" readonly name="car" id="car" onfocus="displayCalendar(document.editdataform.car,'dd/mm/yyyy',this)" onchange="getDateShow('car')">
+                              	ภาษี<input type="text" value="" class="disabletext" readonly name="vat" id="vat" onfocus="displayCalendar(document.editdataform.vat,'dd/mm/yyyy',this)" onchange="getDateShow('vat')">
+                              	<td align="left"><input name="addlicense" type="submit" class="button" id="addlicense" onClick="addLicense()" value="  เพิ่ม  "> </td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td></td>
+                            	<td colspan="2">
+                              <SELECT NAME="ltype" SIZE="1">
+                              	<OPTION "SELECTED" VALUE="-1" > - - -   เลือกประเภทประกัน   - - - </OPTION>                              	<%
+  	                              	     Vector types = manage.getParamDetail(new ParameterDetail(4,-1));
+  	                              	     for (int i=0;i<types.size();i++) {
+  	                              	          ParameterDetail etype = (ParameterDetail)types.elementAt(i);
+                              	%>
+                            	<OPTION VALUE="<%= etype.getParId() %>" > <%= etype.getParName() %> </OPTION>
+                            	<%  } %>
+                              	</SELECT>
+                              <SELECT NAME="lcomp" SIZE="1">
+                              	<OPTION "SELECTED" VALUE="-1" > - - -   เลือกบริษัทประกัน   - - - </OPTION>                              	<%
+  	                              	     Vector comps = manage.getParamDetail(new ParameterDetail(5,-1));
+  	                              	     for (int i=0;i<comps.size();i++) {
+  	                              	          ParameterDetail ecomp = (ParameterDetail)comps.elementAt(i);
+                              	%>
+                            	<OPTION VALUE="<%= ecomp.getParId() %>" > <%= ecomp.getParName() %> </OPTION>
+                            	<%  } %>
+                              	</SELECT>
+                              <SELECT NAME="lact" SIZE="1">
+                              	<OPTION "SELECTED" VALUE="-1" > - - - เลือกบริษัท พ.ร.บ. - - - </OPTION>                              	<%
+  	                              	     Vector acts = manage.getParamDetail(new ParameterDetail(6,-1));
+  	                              	     for (int i=0;i<acts.size();i++) {
+  	                              	          ParameterDetail eact = (ParameterDetail)acts.elementAt(i);
+                              	%>
+                            	<OPTION VALUE="<%= eact.getParId() %>" > <%= eact.getParName() %> </OPTION>
+                            	<%  } %>
+                              	</SELECT>
+                              	</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                              <td colspan="3">
+                              <hr></hr>
+                              </td>
+                            </tr> 
+			              <tr> 
+			                <td align="left" bgcolor="#FFFF00" colspan="3">
+			                	<table width="800" border="1" align="center" cellpadding="0" cellspacing="0">
+				                    <tr align="center"> 
+				                      <td width="83" rowspan="2">ปีหมดอายุ</td>
+				                      <td width="100" rowspan="2">ทะเบียน</td>
+				                      <td width="120" rowspan="2">ยี่ห้อ</td>
+				                      <td width="180" rowspan="2">ภาษี</td>
+				                      <td width="250">
+				                      	<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0">
+				                      	<tr align="center">
+				                      		<td colspan="3">ประกัน</td>
+				                      	</tr>
+				                      	<tr align="center">
+				                      		<td>ประเภท</td>	
+				                      		<td>วันที่</td>	
+				                      		<td>บริษัท</td>	
+				                      	</tr>
+				                      	</table>
+				                      </td>
+				                      <td width="150" rowspan="2">
+				                      	<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0">
+				                      	<tr align="center">
+				                      		<td colspan="3">พ.ร.บ</td>
+				                      	</tr>
+				                      	<tr align="center">
+				                      		<td>วันที่</td>	
+				                      		<td>บริษัท</td>
+				                      	</tr>
+				                      	</table></td>
+				                      <td width="100" rowspan="2">&nbsp;</td>
+				                    </tr>
+			                  </table>
+			                </td>
+			              </tr>
+                            <% 
+                            	for (int j=0;j<entities.size();j++) {
+                            		Customer licust = (Customer)entities.elementAt(j);
+                            %>
+                            <tr class="lineborder"> 
+                              <td > 
+                              <% 
+                              		String[] licenses = StringUtil.stringTokenToArray(ShowData.CheckNull(licust.getLicense()), "-"); 
+                              		if (licenses.length == 2) {
+                              %>
+                              <input name="elicense1<%= j %>" type="text" class="text" id="elicense1<%= j %>" size="3" maxlength="3" value="<%= (licenses.length==0?"":licenses[0]) %>" onchange="checkLicense('editdataform','<%= j %>')">
+                              - <input name="elicense2<%= j %>" type="text" class="text" id="elicense2<%= j %>" size="5" maxlength="4" value="<%= (licenses.length==0?"":licenses[1]) %>" onchange="checkLicense('editdataform','<%= j %>')">                              
+                              <% 
+                              		}  else if (licenses.length == 1){
+                              		if (licust.getLicense().indexOf("-")==0)
+                              %>
+                              <input name="elicense1<%= j %>" type="text" class="text" id="elicense1<%= j %>" size="3" maxlength="3" value="<%= (licust.getLicense().indexOf("-")!=0?licenses[0]:"") %>" onchange="checkLicense('editdataform','<%= j %>')">
+                              - <input name="elicense2<%= j %>" type="text" class="text" id="elicense2<%= j %>" size="5" maxlength="4" value="<%= (licust.getLicense().indexOf("-")==0?licenses[0]:"") %>" onchange="checkLicense('editdataform','<%= j %>')">
+                               <% 
+                              		}  
+                              %>
+                              <input name="elicense<%= j %>" type="hidden" class="text" id="elicense<%= j %>" size="15" maxlength="10" value="<%= ShowData.CheckNull(licust.getLicense()) %>" >
+                              <input name="oldelicense<%= j %>" type="hidden" class="text" id="oldelicense<%= j %>" size="15" maxlength="10" value="<%= ShowData.CheckNull(licust.getLicense()) %>" > 
+                              </td>                          
+                              <td align="left">
+                              <SELECT NAME="ebrand<%= j %>" id="ebrand<%= j %>" SIZE="1" onchange="chkLicense('editdataform',editdataform.elicense<%= j %>,editdataform.ebrand<%= j %>,'-1')">
+                              	<OPTION <%= (((licust.getBrand()==-1))?"SELECTED":"") %> 
+                              			VALUE="-1" > - - เลือกยี่ห้อรถ  - - </OPTION>
+                              	<% 
+                              	//System.out.println("Brand");
+  	                              	     manage = new ParameterManager();
+  	                              	    // et = new ParameterDetail(2);
+  	                              	     //Vector brands = manage.getParamDetail(new ParameterDetail(2,-1));
+  	                              	     for (int i=0;i<brands.size();i++) {
+  	                              	          ParameterDetail ebrand = (ParameterDetail)brands.elementAt(i);
+                              	%>
+                            	<OPTION <%= ((licust.getBrand() == ebrand.getParId())?"SELECTED":"") %> 
+                            		VALUE="<%= ebrand.getParId() %>" > <%= ebrand.getParName() %> </OPTION>
+                            	<%  }
+                              	%>
+                              	</SELECT>
+                            	 ประกันภัย<input type="text" size="15" value="<%= ShowData.CheckNull(licust.getCar()) %>" class="disabletext" readonly name="ecar<%= j %>" id="ecar<%= j %>" onfocus="displayCalendar(document.editdataform.ecar<%= j %>,'dd/mm/yyyy',this)" onchange="getDateShow('ecar<%= j %>')" width="5" >
+                              	ภาษี<input type="text" size="15" value="<%= ShowData.CheckNull(licust.getVat()) %>" class="disabletext" readonly name="evat<%= j %>" id="evat<%= j %>" onfocus="displayCalendar(document.editdataform.evat<%= j %>,'dd/mm/yyyy',this)" onchange="getDateShow('evat<%= j %>')">
+                                
+                              	<td align="left">
+                              		<input name="editlicense" type="submit" class="button" id="editlicense" onClick="editLicense('<%= j %>')" value="แก้ไข">                           		
+                              		<a href="#" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('delete<%= j %>','','../images/delete_f2.gif',1)" onClick="if(confirmDelete('<%= (licust.getLicense()) %>')) MM_goToURL('parent','?action=edit&subaction=delete&custId=<%= licust.getCustId() %>&license=<%= licust.getLicense() %>')"><img src="../images/delete.gif" alt="ลบ" name="delete<%= j %>" width="24" height="24" hspace="0" vspace="0" border="0" id="delete<%= j %>"></a>
+								</td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td></td>
+                            	<td colspan="2">
+                              <SELECT NAME="eltype<%= j %>" id="eltype<%= j %>" SIZE="1" >
+                              	<OPTION <%= (((licust.getLtype()==-1))?"SELECTED":"") %> 
+                              			VALUE="-1" > - - เลือกประเภทประกัน  - - </OPTION>
+                              	<% 
+  	                              	     for (int i=0;i<types.size();i++) {
+  	                              	          ParameterDetail eltype = (ParameterDetail)types.elementAt(i);
+                              	%>
+                            	<OPTION <%= ((licust.getLtype() == eltype.getParId())?"SELECTED":"") %> 
+                            		VALUE="<%= eltype.getParId() %>" > <%= eltype.getParName() %> </OPTION>
+                            	<%  }
+                              	%>
+                              	</SELECT>
+                              <SELECT NAME="elcomp<%= j %>" id="elcomp<%= j %>" SIZE="1" >
+                              	<OPTION <%= (((licust.getLcomp()==-1))?"SELECTED":"") %> 
+                              			VALUE="-1" > - - เลือกบริษัทประกัน - - </OPTION>
+                              	<% 
+  	                              	     for (int i=0;i<comps.size();i++) {
+  	                              	          ParameterDetail elcomp = (ParameterDetail)comps.elementAt(i);
+                              	%>
+                            	<OPTION <%= ((licust.getLcomp() == elcomp.getParId())?"SELECTED":"") %> 
+                            		VALUE="<%= elcomp.getParId() %>" > <%= elcomp.getParName() %> </OPTION>
+                            	<%  }
+                              	%>
+                              	</SELECT>
+                              <SELECT NAME="elact<%= j %>" id="elact<%= j %>" SIZE="1" >
+                              	<OPTION <%= (((licust.getLact()==-1))?"SELECTED":"") %> 
+                              			VALUE="-1" > - - เลือกบริษัท พ.ร.บ. - - </OPTION>
+                              	<% 
+  	                              	     for (int i=0;i<acts.size();i++) {
+  	                              	          ParameterDetail elact = (ParameterDetail)acts.elementAt(i);
+                              	%>
+                            	<OPTION <%= ((licust.getLact() == elact.getParId())?"SELECTED":"") %> 
+                            		VALUE="<%= elact.getParId() %>" > <%= elact.getParName() %> </OPTION>
+                            	<%  }
+                              	%>
+                              	</SELECT>
+                              	</td>
+                            </tr>       
+                            <tr class="lineborder"> 
+                              <td colspan="3" align="center">
+                               ---------------------------------------------------------------------------------------------------------------------------
+                              </td>
+                            </tr>                      
+                            <% } %>
+                            <tr class="lineborder"> 
+                            	<td colspan="3"></td>
+                            </tr>
+                            <tr class="lineborder"> 
+                            	<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                            </tr>
+                          </table>
+                        </form></td>
+                    </tr>
+                  </table>
+                  <%
+                 	}
+                 }catch(com.standard.STDException e){
+                 	e.printStackTrace();
+                 }
+                 
+                 %> </td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+<%
+}
+%>
+</body>
+</html> 

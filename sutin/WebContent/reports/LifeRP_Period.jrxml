@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="LifeRP_Period"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.zoom" value="1.0" />
+	<property name="ireport.x" value="0" />
+	<property name="ireport.y" value="0" />
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+	<reportFont name="Tahoma_Thai" isDefault="true" fontName="Tahoma" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="tahoma.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+
+	<parameter name="month" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["00"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="provinceId" isForPrompting="false" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(-1)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SDATE" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EDATE" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["15"]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[select @rownum:=@rownum+1 rownum,name,tel,provincename,lifemonth,lifedate,province
+from (
+	select concat(ifnull(getParName(3,c.prefix),''),c.name) name,ifnull(c.tel,'-') tel,
+       		ifnull(getParName(1,c.province),'-') provincename,	c.province ,
+		ifnull(substr(l.lifemonth,4,2),'') lifemonth,lifemonth lifedate
+	from customer c,life l
+	where c.custid=l.custid
+	and l.lifemonth is not null
+	and l.active = 1
+	and STR_TO_DATE(l.lifemonth,'%d/%m/%Y') between STR_TO_DATE($P{SDATE},'%d/%m/%Y') and STR_TO_DATE($P{EDATE},'%d/%m/%Y')
+	and (-1 = $P{provinceId} or c.province = $P{provinceId})
+	order by substr(l.lifemonth,4,2),c.name
+) cl,(SELECT @rownum:=0) r]]></queryString>
+
+	<field name="rownum" class="java.lang.Long"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="tel" class="java.lang.String"/>
+	<field name="provincename" class="java.lang.String"/>
+	<field name="lifemonth" class="java.lang.String"/>
+	<field name="lifedate" class="java.lang.String"/>
+	<field name="province" class="java.lang.Integer"/>
+
+
+		<group  name="lifemonth" >
+			<groupExpression><![CDATA[$F{lifemonth}]]></groupExpression>
+			<groupHeader>
+			<band height="19"  isSplitAllowed="true" >
+				<rectangle radius="0" >
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="0"
+						width="535"
+						height="17"
+						forecolor="#000000"
+						backcolor="#00CCCC"
+						key="rectangle"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="0"
+						width="96"
+						height="15"
+						forecolor="#000000"
+						backcolor="#00CCCC"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Top">
+						<font reportFont="Tahoma_Thai" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[เดือน]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="102"
+						y="0"
+						width="128"
+						height="15"
+						forecolor="#000000"
+						backcolor="#00CCCC"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Top">
+						<font reportFont="Tahoma_Thai" size="12" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($F{lifemonth}==null||$F{lifemonth}.equals(""))?"":new java.text.SimpleDateFormat("MMMMM",new java.util.Locale("th","TH")).format(new java.text.SimpleDateFormat("MM").parse($F{lifemonth})))]]></textFieldExpression>
+				</textField>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="10"  isSplitAllowed="true" >
+				<line direction="BottomUp">
+					<reportElement
+						x="1"
+						y="4"
+						width="534"
+						height="1"
+						forecolor="#000000"
+						key="line"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="34"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="32"
+						width="534"
+						height="1"
+						forecolor="#808080"
+						key="line"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="3"
+						width="534"
+						height="1"
+						forecolor="#808080"
+						key="line"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="61"
+						y="6"
+						width="412"
+						height="24"
+						forecolor="#000000"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" lineSpacing="Single">
+						<font reportFont="Tahoma_Thai" size="18"/>
+					</textElement>
+				<text><![CDATA[รายชื่อลูกค้าประกันเอื้ออารีย์]]></text>
+				</staticText>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="9"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="20"  isSplitAllowed="true" >
+				<line direction="BottomUp">
+					<reportElement
+						x="0"
+						y="0"
+						width="535"
+						height="1"
+						forecolor="#000000"
+						key="line"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="BottomUp">
+					<reportElement
+						x="0"
+						y="19"
+						width="535"
+						height="1"
+						forecolor="#000000"
+						key="line"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="38"
+						y="3"
+						width="197"
+						height="17"
+						forecolor="#000000"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Top">
+						<font reportFont="Tahoma_Thai" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[ชื่อ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="247"
+						y="3"
+						width="147"
+						height="17"
+						forecolor="#000000"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Top">
+						<font reportFont="Tahoma_Thai" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[เบอร์โทรศัพท์]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="401"
+						y="3"
+						width="128"
+						height="17"
+						forecolor="#000000"
+						key="staticText-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Top">
+						<font reportFont="Tahoma_Thai" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[วันหมดอายุ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="2"
+						y="3"
+						width="34"
+						height="17"
+						forecolor="#000000"
+						key="staticText-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Top">
+						<font reportFont="Tahoma_Thai" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[ลำดับ]]></text>
+				</staticText>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="18"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="41"
+						y="2"
+						width="197"
+						height="16"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Top">
+						<font reportFont="Tahoma_Thai" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[new String($F{name}.getBytes("ISO8859_1"), "MS874")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="244"
+						y="2"
+						width="147"
+						height="16"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Top">
+						<font reportFont="Tahoma_Thai" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[new String($F{tel}.getBytes("ISO8859_1"), "MS874")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="401"
+						y="2"
+						width="128"
+						height="16"
+						forecolor="#000000"
+						key="textField-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Top">
+						<font reportFont="Tahoma_Thai" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[new String($F{lifedate}.getBytes("ISO8859_1"), "MS874")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="2"
+						y="2"
+						width="28"
+						height="16"
+						forecolor="#000000"
+						key="textField-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font reportFont="Tahoma_Thai" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{rownum}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="27"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="325"
+						y="4"
+						width="174"
+						height="19"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Top">
+						<font reportFont="Tahoma_Thai" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="499"
+						y="4"
+						width="36"
+						height="19"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Top">
+						<font reportFont="Tahoma_Thai" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="3"
+						width="535"
+						height="1"
+						forecolor="#000000"
+						key="line"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="6"
+						width="209"
+						height="19"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Top">
+						<font reportFont="Tahoma_Thai" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+				</textField>
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>
