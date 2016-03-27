@@ -1,0 +1,60 @@
+<html>
+  <head>
+    <title>Unescape Encoder/Decoder</title>
+    <script language="javascript">
+    function reg(address) {
+    	alert(address);
+    	document.fA.c1.value=document.fA.address.value
+    }
+
+		//helper function to create the form
+		function getNewSubmitForm(){
+		 var submitForm = document.createElement("FORM");
+		 document.body.appendChild(submitForm);
+		 submitForm.method = "POST";
+		 return submitForm;
+		}
+		
+		//helper function to add elements to the form
+		function createNewFormElement(inputForm, elementName, elementValue){
+		 var newElement = document.createElement("<input name='"+elementName+"' type='hidden'>");
+		 inputForm.appendChild(newElement);
+		 newElement.value = elementValue;
+		 return newElement;
+		}
+		
+		//function that creates the form, adds some elements
+		//and then submits it
+		function createFormAndSubmit(){
+		 var submitForm = getNewSubmitForm();
+		 createNewFormElement(submitForm, "field1", "somevalue");
+		 createNewFormElement(submitForm, "field2", "somevalue");
+		 submitForm.action= "test.html";
+		 submitForm.submit();
+		}
+    </script>
+  </head>
+  <body bgcolor="#FFFFFF" alink="#C0C0C0" link="#C0C0C0" vlink="#C0C0C0">
+    <font color=#000000 size="5">
+      <br>
+      <center>
+        <form name="fA">
+          Decoded
+          <br>
+          <textarea id="f1" cols=50 rows=10 wrap="off"></textarea>
+          <br><br>
+         <textarea cols="40" rows="5" name="address" type="text" class="text" value="" ></textarea>
+          <input type="button" value="Decode" onclick="reg(document.fA.address.value)">
+          <br><br>Encoded
+          <br>
+          <textarea id="c1" cols=50 rows=10></textarea>
+          <br><br>
+          <font color=#000000 size="3">
+            This can be used with the unescape( ); function in JavaScript.
+            <input type="button" value="Click to create form and submit" onclick="createFormAndSubmit()">
+          </font>
+        </form>
+      </center>
+    </font>
+  </body>
+</html>

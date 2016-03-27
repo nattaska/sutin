@@ -1,0 +1,99 @@
+td {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	height: 13px;
+
+}
+input.text{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	float: none;
+	border: thin solid #D8D8C4;
+	background-color: #FFFFFF;
+
+}
+input.number{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	float: none;
+	border: thin solid #D8D8C4;
+	background-color: #FFFFFF;
+	text-align: right;
+
+
+
+}
+input.disabletext{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	float: none;
+	border: thin solid #D8D8C4;
+	background-color: #EEEEEE;
+
+}
+input.disablenumber{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	float: none;
+	border: thin solid #D8D8C4;
+	background-color: #EEEEEE;
+	text-align: right;
+
+
+
+}
+input.bigtext{
+	font-family: "Courier New", Courier, mono;
+	font-size: 18px;
+	font-style: normal;
+	float: none;
+	border: thin solid #D8D8C4;
+	background-color: #000000;
+	font-weight: bold;
+	color: #66FFFF;
+	text-align: right;
+
+}
+input.button{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	background-color: #CCCCCC;
+	float: none;
+	border: 1px solid #666666;
+	cursor: hand;
+
+
+}
+.lineborder {
+	border: 1px solid #D8D8C4;
+}
+.pagetitle {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	font-weight: bold;
+
+}
+.smallfont {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 9px;
+}
+a, a:visited {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-decoration: none;
+	color: #3366CC;
+
+
+}
+a:hover{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-decoration: underline;
+
+}
