@@ -112,7 +112,7 @@ public class UserManager extends DBControl implements java.io.Serializable{
     
 	public String insertUser(User user)
 	{
-		String sql = "INSERT INTO USERS (userid,password,name,tel,position,status,active,cuser,cdate) \n" +
+		String sql = "INSERT INTO users (userid,password,name,tel,position,status,active,cuser,cdate) \n" +
 					 "		VALUES('"+user.getUserId()+"' \n" +
 					 "		,'"+user.getPassword()+"' \n" +
 					 "		,'"+StringUtil.Unicode2ASCII(user.getName())+"' \n" +
@@ -139,7 +139,7 @@ public class UserManager extends DBControl implements java.io.Serializable{
 	}
 	public String updateUser(User user)
 	{
-		String sql = "UPDATE USERS SET PASSWORD = '"+user.getPassword()+"' \n" +
+		String sql = "UPDATE users SET PASSWORD = '"+user.getPassword()+"' \n" +
 					 "		,NAME = '"+StringUtil.Unicode2ASCII(user.getName())+"' \n" +
 					 "		,POSITION = '"+user.getPosition()+"' \n" +
 					 "		,TEL = '"+user.getTel()+"' \n" +
@@ -165,7 +165,7 @@ public class UserManager extends DBControl implements java.io.Serializable{
 	}
 	public String deleteUser(User user)
 	{
-		String sql = "DELETE FROM USERS " +
+		String sql = "DELETE FROM users " +
 					 "WHERE USERID = '"+user.getUserId()+"'";
 		System.out.println(sql);
         try
@@ -186,7 +186,7 @@ public class UserManager extends DBControl implements java.io.Serializable{
     public Vector getUser(User user) throws STDException, IOException
     {
         Vector entities = new Vector(0);
-        String sql = "SELECT * FROM USERS WHERE 1=1 \n";
+        String sql = "SELECT * FROM users WHERE 1=1 \n";
         if(user.getUserId() != null)
             sql = sql + "AND USERID = '" + user.getUserId().trim() + "' \n";
         if(user.getName() != null)
@@ -232,7 +232,7 @@ public class UserManager extends DBControl implements java.io.Serializable{
     public Vector searchUser(User user) throws STDException, IOException
     {
         Vector entities = new Vector(0);
-        String sql = "SELECT * FROM USERS WHERE 1=1 \n";
+        String sql = "SELECT * FROM users WHERE 1=1 \n";
         if(user.getUserId() != null)
             sql = sql + "AND USERID LIKE '%" + user.getUserId().trim() + "%' \n";        
         if(user.getName() != null)
@@ -280,7 +280,7 @@ public class UserManager extends DBControl implements java.io.Serializable{
         String sql = "";
         User entity = null;
         if(username != null){
-        	sql = "SELECT * FROM USERS WHERE 1=1 \n";
+        	sql = "SELECT * FROM users WHERE 1=1 \n";
             sql = sql + "AND USERID = '" + username.trim() + "' \n";
 	        sql = sql + "AND ACTIVE = 1 \n";
 	        sql = sql + "ORDER BY USERID";

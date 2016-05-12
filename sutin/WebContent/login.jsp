@@ -11,6 +11,7 @@
 if(request.getParameter("url") != null){ 
     urlBean.setUrl(request.getParameter("url"));
 }
+
 if (request.getMethod().equals("POST") && !userBean.authenticated()) {
     userBean.setUsername(request.getParameter("username"));
     userBean.setPassword(request.getParameter("password"));
@@ -21,7 +22,8 @@ if (request.getMethod().equals("POST") && !userBean.authenticated()) {
 <%
 if(userBean.authenticated()){
     if(request.getParameter("action") == null || !request.getParameter("action").equals("logout")){
-        response.sendRedirect(urlBean.getUrl());
+        //response.sendRedirect(urlBean.getUrl());
+        response.sendRedirect(request.getScheme() + "://" + request.getServerName() + ":8080/sutin/" + urlBean.getUrl());
     }else{
         userBean.setUsername("");
         userBean.setPassword("");

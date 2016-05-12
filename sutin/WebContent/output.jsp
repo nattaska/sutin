@@ -3,7 +3,7 @@
 
 <html>
 <head>
-<title><jsp:include page="../title.jsp" /></title>
+<title><jsp:include page="title.jsp" /></title>
 <meta http-equiv="Content-Type" content="text/html; charset=tis-620">
 <link href="site.css" rel="stylesheet" type="text/css">
 <style type="text/css">

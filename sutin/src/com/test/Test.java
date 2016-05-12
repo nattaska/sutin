@@ -33,7 +33,19 @@ public class Test extends DBControl {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) {
-		System.out.println(StringUtil.toString(Calendar.getInstance().getTime(), "yyyy"));
+		CustomerManager cm = new CustomerManager();
+		CustomerPage cust = new CustomerPage();
+//		cust.setCustId(1);
+//		try {
+//			System.out.println(cm.searchCustomerPage(cust,Customer.ALL,"00"));
+//		} catch (STDException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		System.out.println(StringUtil.toString(Calendar.getInstance().getTime(), "yyyy"));
 //		String t = "¼È-";
 //		String st[] = StringUtil.stringTokenToArray(t, "-");
 //		System.out.println(st1.length);
@@ -135,7 +147,7 @@ public class Test extends DBControl {
 //				System.out.println(StringUtil.toStringMonth(""+i));
 ////				System.out.println("01/"+i+"/09  "+sp.format(DateUtil.toUtilDate("01/"+i+"/09")));
 //		}
-		System.out.println(DateUtil.changeToThaiDate(new Date()));
+//		System.out.println(DateUtil.changeToThaiDate(new Date()));
 //		Test t = new Test();
 //		try {
 //			t.testGetCustomerPage();

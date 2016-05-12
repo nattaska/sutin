@@ -16,7 +16,7 @@ import com.standard.util.StringUtil;
 public class ParameterManager extends DBControl {
 	
 	private int getMaxParId(int tabid) throws STDException {
-		String sql = "select max(parid) maxpar from PARPARAM where tabid = "+tabid;
+		String sql = "select max(parid) maxpar from parparam where tabid = "+tabid;
 		int maxId=0;
         try
         {
@@ -38,7 +38,7 @@ public class ParameterManager extends DBControl {
 	}
 	
 	public String getTableName(int tabid) throws STDException, IOException {
-		String sql = "select tabname from PARTABLE where tabid = "+tabid;
+		String sql = "select tabname from partable where tabid = "+tabid;
 		String tabname = null;
         try
         {
@@ -61,7 +61,7 @@ public class ParameterManager extends DBControl {
 
 	public String insertParamDetail(ParameterDetail entity) throws STDException
 	{
-		String sql = "INSERT INTO PARPARAM (TABID,PARID,PARNAME,UPDBY,UPDDATE) \n" +
+		String sql = "INSERT INTO parparam (TABID,PARID,PARNAME,UPDBY,UPDDATE) \n" +
 					 "VALUES("+entity.getTabId()+" \n" +
 					 ","+(this.getMaxParId(entity.getTabId())+1)+" \n" +
 					 ",'"+StringUtil.Unicode2ASCII(entity.getParName())+"' \n" +
@@ -86,7 +86,7 @@ public class ParameterManager extends DBControl {
 
 	public String updateParamDetail(ParameterDetail entity)
 	{
-		String sql = "UPDATE PARPARAM SET PARNAME = '"+StringUtil.Unicode2ASCII(entity.getParName())+"' \n" +
+		String sql = "UPDATE parparam SET PARNAME = '"+StringUtil.Unicode2ASCII(entity.getParName())+"' \n" +
 					 ",UPDBY = '"+StringUtil.Unicode2ASCII(entity.getUpdBy())+"' \n" +
 					 ",UPDDATE = now() \n" +
 					 "WHERE TABID = '"+entity.getTabId()+"' \n" +
@@ -109,7 +109,7 @@ public class ParameterManager extends DBControl {
 	}
 	public String deleteParamDetail(int tabId,int parId)
 	{
-		String sql = "DELETE FROM PARPARAM \n" +
+		String sql = "DELETE FROM parparam \n" +
 					 "WHERE TABID = '"+tabId+"' \n" +
 					 "AND PARID = '"+parId+"' \n";
 		System.out.println(sql);
@@ -132,7 +132,7 @@ public class ParameterManager extends DBControl {
     public Vector getAllParamHeader() throws STDException, IOException
     {
         Vector<ParameterDetail> entities = new Vector<ParameterDetail>(0);
-        String sql = "SELECT * FROM PARTABLE ORDER BY TABID \n";
+        String sql = "SELECT * FROM partable ORDER BY TABID \n";
         System.out.println(sql);
         try
         {
@@ -161,7 +161,7 @@ public class ParameterManager extends DBControl {
     public Vector getParamDetail(ParameterDetail criterie) throws STDException, IOException
     {
         Vector<ParameterDetail> entities = new Vector<ParameterDetail>(0);
-        String sql = "SELECT * FROM PARPARAM WHERE 1=1 \n";
+        String sql = "SELECT * FROM parparam WHERE 1=1 \n";
         if (criterie != null) {
 	        if(criterie.getTabId() != -1)
 	            sql = sql + "AND TABID = " + criterie.getTabId() + " \n";
@@ -199,7 +199,7 @@ public class ParameterManager extends DBControl {
 
     public String getParamName(int table,int entry) throws STDException, IOException
     {
-        String sql = "SELECT PARNAME FROM PARPARAM WHERE TABID = " + table + " AND PARID = " + entry;
+        String sql = "SELECT PARNAME FROM parparam WHERE TABID = " + table + " AND PARID = " + entry;
         System.out.println(sql);
         String pName = null;
 
@@ -227,7 +227,7 @@ public class ParameterManager extends DBControl {
     public Vector searchParamHeader(ParameterDetail criterie) throws STDException, IOException
     {
         Vector<ParameterDetail> entities = new Vector<ParameterDetail>(0);
-        String sql = "SELECT * FROM PARPARAM WHERE 1=1 \n";
+        String sql = "SELECT * FROM parparam WHERE 1=1 \n";
         if (criterie != null) {
 	        if(criterie.getTabId() != -1)
 	            sql = sql + "AND TABID = " + criterie.getTabId() + " \n";

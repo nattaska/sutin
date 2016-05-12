@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import com.insurance.entity.Customer;
@@ -15,10 +17,10 @@ import com.standard.util.StringUtil;
 
 public class TestManager extends DBControl {
 	
-	public Vector getTest(Test cust) throws STDException, IOException
+	public List<Test> getTest(Test cust) throws STDException, IOException
     {
-	    Vector entities = new Vector(0);
-	    String sql = "SELECT * FROM Test WHERE 1=1 and name like '%"+
+	    List<Test> entities = new ArrayList<Test>();
+	    String sql = "SELECT * FROM users WHERE 1=1 and name like '%"+
 	    			 StringUtil.Unicode2ASCII(cust.getName())+"%'\n";
 
         System.out.println(sql);
@@ -31,7 +33,7 @@ public class TestManager extends DBControl {
             for(res = stmt.executeQuery(sql); res.next(); entities.add(entity))
             {
             	entity = new Test();
-            	entity.setId(res.getInt("ID"));
+            	entity.setId(res.getString("USERID"));
             	entity.setName(StringUtil.encode2Thai(res.getString("NAME")));
             }
             System.out.println(entities.size());

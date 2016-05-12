@@ -99,7 +99,7 @@ public class CustomerManager extends DBControl {
         			 "		 c.province,getParName(1,c.province) provincename, \n" +
         			 "		 c.tel,c.address,c.zipcode, \n" +
         			 "		 l.license,l.brandid, l.carmonth,l.vatmonth,f.fmonth \n" +
-        			 "FROM CUSTOMER c left join fire f on c.custid =f.custid \n" +
+        			 "FROM customer c left join fire f on c.custid =f.custid \n" +
         			 "	   left join license l on c.custid =l.custid \n" +
         			 "WHERE 1=1 \n";
         if(cust.getCustId() != -1)
@@ -318,6 +318,177 @@ public class CustomerManager extends DBControl {
             throw new STDException("Data not found");
         }
         return entities;
+    }
+
+    public String searchCustomerPageString(CustomerPage cust,int type,String month) throws STDException, IOException
+    {
+        Vector<CustomerPage> entities = new Vector<CustomerPage>(0);
+        String mainSql = "( " +
+        				"select c.custid,c.name,c.prefix,c.province from customer c  \n" +
+				        "where c.custid in (select l.custid  \n" +
+				        "                   from license l  \n" +
+				        "                   where l.active=1 \n";
+        if(cust.getLicense() != null && cust.getLicense().length() > 0)
+        	mainSql = mainSql + "and l.license LIKE '%" + StringUtil.Unicode2ASCII(cust.getLicense().trim()) + "%' \n";
+        
+        if (type == Customer.VAT) {
+        	if (month != null && !month.equals("00")) {
+        		mainSql = mainSql + "and substr(l.vatmonth,4,2) = '"+month+"' \n";
+        	} else {
+        		mainSql = mainSql + "and l.vatmonth is not null \n";
+        	}
+        } else if (type == Customer.ACT) {
+        	if (month != null && !month.equals("00")) {
+        		mainSql = mainSql + "and substr(l.actmonth,4,2) = '"+month+"' \n";
+        	} else {
+        		mainSql = mainSql + "and l.actmonth is not null \n";
+        	}
+        } else if (type == Customer.CAR) {
+        	if (month != null && !month.equals("00")) {
+        		mainSql = mainSql + "and substr(l.carmonth,4,2) = '"+month+"' \n";
+        	} else {
+        		mainSql = mainSql + "and l.carmonth is not null \n";
+        	}
+        } else if (type == Customer.CHK) {
+        	if (month != null && !month.equals("00")) {
+        		mainSql = mainSql + "and substr(l.chkmonth,4,2) = '"+month+"' \n";
+        	} else {
+        		mainSql = mainSql + "and l.chkmonth is not null \n";
+        	}
+        } else if (type == Customer.ALL) {
+        	if (month != null && !month.equals("00")) {
+        	mainSql = mainSql+"and (substr(l.carmonth,4,2) = '"+month+"'  \n" +
+						      "or substr(l.vatmonth,4,2) = '"+month+"'  \n" +
+						      "or substr(l.chkmonth,4,2) = '"+month+"'  \n" +
+						      "or substr(l.actmonth,4,2) = '"+month+"') \n";
+        	}
+        }
+        mainSql = mainSql+") \n ";
+		mainSql = mainSql+"or c.custid in (select f.custid from fire f where f.active=1  \n";
+        if (type == Customer.FIRE) {
+        	if (month != null && !month.equals("00")) {
+        		mainSql = mainSql + "and substr(f.fmonth,4,2) = '"+month+"' \n";
+        	} else {
+        		mainSql = mainSql + "and f.fmonth is not null \n";
+        	}
+        }
+        mainSql = mainSql+")";
+        mainSql = mainSql+"or c.custid in (select lf.custid from life lf where lf.active=1  \n";
+        if (type == Customer.FIRE) {
+        	if (month != null && !month.equals("00")) {
+        		mainSql = mainSql + "and substr(lf.lifemonth,4,2) = '"+month+"' \n";
+        	} else {
+        		mainSql = mainSql + "and lf.lifemonth is not null \n";
+        	}
+        }
+        mainSql = mainSql+") \n";
+        mainSql = mainSql+")";
+        //"SELECT c.custid, getParName(3,c.prefix) prefix, c.name,c.province,getParName(1,c.province) provincename, \n" +
+		// "		 l.license, l.carmonth,l.vatmonth,l.actmonth,f.fmonth,lf.lifemonth \n" +
+        String sql = "select ll.custid,getParName(3,ll.prefix) prefix,ll.name,ll.province,getParName(1,ll.province) provincename,\n" +
+        			 "ll.license,ll.carmonth,ll.vatmonth,ll.actmonth,ll.chkmonth,ff.fmonth,ee.lifemonth from  \n" +
+			        "( \n" +
+			        "select cx.custid,cx.prefix,cx.name,cx.province,lx.license,lx.carmonth,lx.vatmonth,lx.actmonth,lx.chkmonth from \n" +
+			        mainSql+" cx left join license lx on cx.custid=lx.custid and lx.active=1 \n" +
+			        ") ll, \n" +
+			        "( \n" +
+			        "select cx.custid,fx.fmonth from \n" +
+			        //"( \n" +
+			        mainSql+" cx left join fire fx on cx.custid=fx.custid and fx.active=1 \n" +
+			        ") ff, \n" +
+			        "( \n" +
+			        "select cx.custid,ex.lifemonth from \n" +
+			        //"( \n" +
+			        mainSql+" cx left join life ex on cx.custid=ex.custid and ex.active=1) ee \n" +
+			        "where ll.custid=ff.custid \n" +
+			        "and ll.custid=ee.custid \n" ;
+        
+        if(cust.getLicense() != null && cust.getLicense().length() > 0)
+        	sql = sql + "and ll.license LIKE '%" + StringUtil.Unicode2ASCII(cust.getLicense().trim()) + "%' \n";
+        
+        if (type == Customer.FIRE) {
+        	if (month != null && !month.equals("00")) 
+        		sql = sql + "and substr(ff.fmonth,4,2) = '"+month+"' \n";
+        	else
+        		sql = sql + "and ff.fmonth is not null \n";
+        } else if (type == Customer.ALL) {
+        	if (month != null && !month.equals("00")) {
+        		sql = sql + "and (substr(ll.carmonth,4,2) = '"+month+"' \n" +
+							"	  or substr(ll.vatmonth,4,2) = '"+month+"' \n" +
+							"	  or substr(ll.actmonth,4,2) = '"+month+"' \n" +
+							"	  or substr(ll.chkmonth,4,2) = '"+month+"' \n" +
+							"	  or substr(ff.fmonth,4,2) = '"+month+"' \n"+
+							"	  or substr(ee.lifemonth,4,2) = '"+month+"') \n";
+        	} 
+        } else if (type == Customer.CAR) {
+        	if (month != null && !month.equals("00")) 
+        		sql = sql + "and substr(ll.carmonth,4,2) = '"+month+"' \n";
+        	else
+        		sql = sql + "and ll.carmonth is not null \n";
+        } else if (type == Customer.LIFE) {
+        	if (month != null && !month.equals("00")) 
+        		sql = sql + "and substr(ee.lifemonth,4,2) = '"+month+"' \n";
+        	else
+        		sql = sql + "and ee.lifemonth is not null \n";
+        } else if (type == Customer.VAT) {
+        	if (month != null && !month.equals("00")) 
+        		sql = sql + "and substr(ll.vatmonth,4,2) = '"+month+"' \n";
+        	else
+        		sql = sql + "and ll.vatmonth is not null \n";        		
+        } else if (type == Customer.ACT) {
+        	if (month != null && !month.equals("00")) 
+        		sql = sql + "and substr(ll.actmonth,4,2) = '"+month+"' \n";
+        	else
+        		sql = sql + "and ll.actmonth is not null \n";
+        } else if (type == Customer.CHK) {
+        	if (month != null && !month.equals("00")) 
+        		sql = sql + "and substr(ll.chkmonth,4,2) = '"+month+"' \n";
+        	else
+        		sql = sql + "and ll.chkmonth is not null \n";
+        }
+        
+        if(cust.getCustId() != -1)
+            sql = sql + "AND ll.custid = " + cust.getCustId() + " \n";
+
+        if(cust.getName() != null && cust.getName().length() > 0)
+            sql = sql + "AND ll.name LIKE '%" + StringUtil.Unicode2ASCII(cust.getName().trim()) + "%' \n";
+               
+        if(cust.getProvince() != -1)
+            sql = sql + "AND ll.province = " + cust.getProvince() + " \n";
+        sql = sql + "ORDER BY ll.name,ll.license";
+//        System.out.println(sql);
+//        try
+//        {
+//            Connection conn = getConnection();
+//            Statement stmt = conn.createStatement();
+//            ResultSet res;
+//            CustomerPage entity = null;
+//            for(res = stmt.executeQuery(sql); res.next(); entities.add(entity))
+//            {
+//            	entity = new CustomerPage();
+//            	entity.setCustId(res.getInt("CUSTID"));
+//            	entity.setPrefixName(StringUtil.encode2Thai(res.getString("PREFIX")));
+//            	entity.setName(StringUtil.encode2Thai(res.getString("NAME")));	
+//            	entity.setProvinceName(StringUtil.encode2Thai(res.getString("PROVINCENAME")));
+//            	entity.setLicense(res.getString("LICENSE")==null?null:StringUtil.encode2Thai(res.getString("LICENSE")));
+//            	entity.setCar(res.getString("CARMONTH")==null?null:(res.getString("CARMONTH")));	
+//            	entity.setVat(res.getString("VATMONTH")==null?null:(res.getString("VATMONTH")));
+//            	entity.setAct(res.getString("ACTMONTH")==null?null:(res.getString("ACTMONTH")));
+//            	entity.setFire(res.getString("FMONTH")==null?null:(res.getString("FMONTH")));
+//            	entity.setLife(res.getString("LIFEMONTH")==null?null:(res.getString("LIFEMONTH")));
+//            	entity.setChk(res.getString("CHKMONTH")==null?null:(res.getString("CHKMONTH")));
+//            }
+//
+//            res.close();
+//            stmt.close();
+//            conn.close();
+//        }
+//        catch(SQLException e)
+//        {
+//        	
+//            throw new STDException("Data not found");
+//        }
+        return sql;
     }
 
     public Customer getCustomer(int custId) throws STDException, IOException
@@ -619,7 +790,7 @@ public class CustomerManager extends DBControl {
 		int maxId = this.getMaxID(-1);
 		cust.setCustId(maxId+1);
 		StringBuffer sqlbuff = new StringBuffer();
-		sqlbuff.append("INSERT INTO CUSTOMER (custid,prefix,name,tel,address,province,zipcode,creby,credate,updby,upddate) \n");
+		sqlbuff.append("INSERT INTO customer (custid,prefix,name,tel,address,province,zipcode,creby,credate,updby,upddate) \n");
 		sqlbuff.append("VALUES("+cust.getCustId());
 		sqlbuff.append(" , "+(cust.getPrefix()==-1?null:cust.getPrefix()));
 		sqlbuff.append(" , '"+(cust.getName()==""?null:StringUtil.Unicode2ASCII(cust.getName()))+"'");
@@ -681,7 +852,7 @@ public class CustomerManager extends DBControl {
 	{
 		StringBuffer carSql = new StringBuffer();
 		if (type == CustomerManager.INSERT) {			
-			carSql.append("INSERT INTO LICENSE (custid,license,year,brandid,ltype,lcomp,lact,carmonth,vatmonth,actmonth,chkmonth,carprice,vatprice,actprice,chkprice,vatservice,comment,creby,credate,updby,upddate) \n");
+			carSql.append("INSERT INTO license (custid,license,year,brandid,ltype,lcomp,lact,carmonth,vatmonth,actmonth,chkmonth,carprice,vatprice,actprice,chkprice,vatservice,comment,creby,credate,updby,upddate) \n");
 			carSql.append(" VALUES("+ cust.getCustId());
 			carSql.append(" , '"+(cust.getLicense().equals("")?null:StringUtil.Unicode2ASCII(cust.getLicense()))+"' ");
 			carSql.append(" , "+cust.getYear());
@@ -720,7 +891,7 @@ public class CustomerManager extends DBControl {
 			carSql.append(" , '"+StringUtil.Unicode2ASCII(cust.getUpdBy())+"' ");
 			carSql.append(" , now()) ");
 		} else {
-			carSql.append("UPDATE LICENSE \n ");
+			carSql.append("UPDATE license \n ");
 			carSql.append("SET BRANDID = "+(cust.getBrand()==-1?"null":cust.getBrand())+" \n");
 			carSql.append("	   ,ltype = "+(cust.getLtype()==-1?"null":cust.getLtype())+" \n");
 			carSql.append("	   ,lcomp = "+(cust.getLcomp()==-1?"null":cust.getLcomp())+" \n");
@@ -766,7 +937,7 @@ public class CustomerManager extends DBControl {
 	{	
 		StringBuffer fireSql = new StringBuffer();
 		if (type == CustomerManager.INSERT) {
-			fireSql.append("INSERT INTO FIRE (custid,year,insurer,fmonth,fireprice,creby,credate,updby,upddate) \n" );
+			fireSql.append("INSERT INTO fire (custid,year,insurer,fmonth,fireprice,creby,credate,updby,upddate) \n" );
 			fireSql.append("VALUES("+ cust.getCustId());
 			fireSql.append(" , "+cust.getYear());
 			fireSql.append(" , "+(cust.getFireInsurer()==-1?"null":cust.getFireInsurer()));
@@ -781,7 +952,7 @@ public class CustomerManager extends DBControl {
 			fireSql.append(" ,now())" );
 //			System.out.println(fireSql);
 		} else {
-			fireSql.append("UPDATE FIRE SET \n ");
+			fireSql.append("UPDATE fire SET \n ");
 			if (cust.getFire().equals("")||cust.getFire().equals("00")) {
 				fireSql.append("fmonth=null \n ");
 			} else {
@@ -802,7 +973,7 @@ public class CustomerManager extends DBControl {
 	{	
 		StringBuffer lifeSql = new StringBuffer();
 		if (type == CustomerManager.INSERT) {
-			lifeSql.append("INSERT INTO LIFE (custid,year,insurer,lifemonth,lifeprice,creby,credate,updby,upddate) \n" );
+			lifeSql.append("INSERT INTO life (custid,year,insurer,lifemonth,lifeprice,creby,credate,updby,upddate) \n" );
 			lifeSql.append("VALUES("+ cust.getCustId());
 			lifeSql.append(" , "+cust.getYear());
 			lifeSql.append(" , "+(cust.getLifeInsurer()==-1?"null":cust.getLifeInsurer()));
@@ -816,7 +987,7 @@ public class CustomerManager extends DBControl {
 			lifeSql.append(" ,'"+(StringUtil.Unicode2ASCII(cust.getUpdBy()))+"'" );
 			lifeSql.append(" ,now())" );
 		} else {
-			lifeSql.append("UPDATE LIFE SET \n ");
+			lifeSql.append("UPDATE life SET \n ");
 			if (cust.getLife().equals("")||cust.getLife().equals("00")) {
 				lifeSql.append("lifemonth=null \n ");
 			} else {
@@ -837,7 +1008,7 @@ public class CustomerManager extends DBControl {
 	public String updateCustomer(CustomerPage cust) throws STDException
 	{
 		StringBuffer sqlbuff = new StringBuffer();
-		sqlbuff.append("UPDATE CUSTOMER SET  \n");
+		sqlbuff.append("UPDATE customer SET  \n");
 		sqlbuff.append("prefix = "+(cust.getPrefix()==-1?null:cust.getPrefix())+" \n");
 		sqlbuff.append(",name = '"+(cust.getName()==""?null:StringUtil.Unicode2ASCII(cust.getName()))+"' \n");
 		sqlbuff.append(",tel = '"+(cust.getTel()==""?null:StringUtil.Unicode2ASCII(cust.getTel()))+"' \n");
@@ -886,7 +1057,7 @@ public class CustomerManager extends DBControl {
 	
 	public String deleteCustomer(CustomerPage cust)
 	{
-		String sql = "DELETE FROM CUSTOMER WHERE custid = "+cust.getCustId()+" \n";
+		String sql = "DELETE FROM customer WHERE custid = "+cust.getCustId()+" \n";
 //		System.out.println(sql);
 		
 		Connection conn = null;
@@ -929,7 +1100,7 @@ public class CustomerManager extends DBControl {
 	
 	public String deleteLicense(CustomerPage cust,int type) throws STDException
 	{
-		String sql = "DELETE FROM LICENSE WHERE custid = "+cust.getCustId()+ " \n "+
+		String sql = "DELETE FROM license WHERE custid = "+cust.getCustId()+ " \n "+
 					 "and license = '"+cust.getLicense()+"' \n" +
 		 			 "and year = "+cust.getYear();
 //		System.out.println(sql);
@@ -976,7 +1147,7 @@ public class CustomerManager extends DBControl {
 	
 	public String deleteFire(CustomerPage cust,int type) throws STDException
 	{
-		String sql = "DELETE FROM FIRE WHERE custid = "+cust.getCustId()+ " \n "+
+		String sql = "DELETE FROM fire WHERE custid = "+cust.getCustId()+ " \n "+
 		 			 "and year = "+cust.getYear();
 //		System.out.println(sql);
 		
@@ -1018,7 +1189,7 @@ public class CustomerManager extends DBControl {
 	
 	public String deleteLife(CustomerPage cust,int type) throws STDException
 	{
-		String sql = "DELETE FROM LIFE WHERE custid = "+cust.getCustId()+ " \n "+
+		String sql = "DELETE FROM life WHERE custid = "+cust.getCustId()+ " \n "+
 		 			 "and year = "+cust.getYear();
 //		System.out.println(sql);
 		
@@ -1066,7 +1237,7 @@ public class CustomerManager extends DBControl {
         	return "!!!\tกรุณาใส่ข้อมูลวันหมดอายุ\t!!!";
         }
 
-		fireSql.append("UPDATE FIRE SET year = "+cust.getYear()+"\n ");
+		fireSql.append("UPDATE fire SET year = "+cust.getYear()+"\n ");
 		fireSql.append("WHERE custid="+cust.getCustId()+" \n");
 		fireSql.append("AND year="+oldyear+" \n");
 
@@ -1117,7 +1288,7 @@ public class CustomerManager extends DBControl {
         	return "!!!\tกรุณาใส่ข้อมูลวันหมดอายุ\t!!!";
         }
 
-		lifeSql.append("UPDATE LIFE SET year = "+cust.getYear()+"\n ");
+		lifeSql.append("UPDATE life SET year = "+cust.getYear()+"\n ");
 		lifeSql.append("WHERE custid="+cust.getCustId()+" \n");
 		lifeSql.append("AND year="+oldyear+" \n");
 
@@ -1168,7 +1339,7 @@ public class CustomerManager extends DBControl {
         	return "!!!\tกรุณาใส่ข้อมูลทะเบียนรถ และปีหมดอายุ\t!!!";
         }
 
-		carSql.append("UPDATE LICENSE \n ");
+		carSql.append("UPDATE license \n ");
 		carSql.append("SET license = '"+StringUtil.Unicode2ASCII(cust.getLicense())+"' \n");
 		carSql.append("	   ,year = "+cust.getYear());
 		carSql.append("	   ,BRANDID = "+cust.getBrand());
@@ -1226,21 +1397,21 @@ public class CustomerManager extends DBControl {
 	
 	public String getDeleteLicense(CustomerPage cust)
 	{
-		String sql = "DELETE FROM LICENSE WHERE custid = "+cust.getCustId();
+		String sql = "DELETE FROM license WHERE custid = "+cust.getCustId();
 //		System.out.println(sql);
         return sql;
 	}
 	
 	public String getDeleteLife(CustomerPage cust)
 	{
-		String sql = "DELETE FROM LIFE WHERE custid = "+cust.getCustId();
+		String sql = "DELETE FROM life WHERE custid = "+cust.getCustId();
 //		System.out.println(sql);
         return sql;
 	}
 	
 	public String getDeleteFire(CustomerPage cust)
 	{
-		String sql = "DELETE FROM FIRE WHERE custid = "+cust.getCustId();
+		String sql = "DELETE FROM fire WHERE custid = "+cust.getCustId();
 //		System.out.println(sql);
         return sql;
 	}
@@ -1293,7 +1464,7 @@ public class CustomerManager extends DBControl {
 	{
 		StringBuffer carAct = new StringBuffer();
 		
-        carAct.append("UPDATE LICENSE \n ");
+        carAct.append("UPDATE license \n ");
         carAct.append("SET active = "+status+" \n");
         carAct.append("WHERE custid="+cust.getCustId()+" \n");
         carAct.append("AND license='"+StringUtil.Unicode2ASCII(cust.getLicense())+"' \n");
@@ -1311,7 +1482,7 @@ public class CustomerManager extends DBControl {
 	{
 		StringBuffer fireAct = new StringBuffer();
 		
-		fireAct.append("UPDATE FIRE \n ");
+		fireAct.append("UPDATE fire \n ");
 		fireAct.append("SET active = "+status+" \n");
 		fireAct.append("WHERE custid="+cust.getCustId()+" \n");
         if (status == 1) {
@@ -1328,7 +1499,7 @@ public class CustomerManager extends DBControl {
 	{
 		StringBuffer fireAct = new StringBuffer();
 		
-		fireAct.append("UPDATE LIFE \n ");
+		fireAct.append("UPDATE life \n ");
 		fireAct.append("SET active = "+status+" \n");
 		fireAct.append("WHERE custid="+cust.getCustId()+" \n");
         if (status == 1) {
@@ -1345,19 +1516,19 @@ public class CustomerManager extends DBControl {
 	{
 		StringBuffer carSql = new StringBuffer();
 		if ("firepic".equalsIgnoreCase(col)) {
-			carSql.append("UPDATE FIRE \n ");
+			carSql.append("UPDATE fire \n ");
 			carSql.append("SET upddate= now() \n");
 			carSql.append(","+col+"='"+filename+"' \n ");
 			carSql.append("WHERE custid="+cust+" \n");
 			carSql.append("AND year="+year+" \n");
 		} else if ("lifepic".equalsIgnoreCase(col)) {
-			carSql.append("UPDATE LIFE \n ");
+			carSql.append("UPDATE life \n ");
 			carSql.append("SET upddate= now() \n");
 			carSql.append(","+col+"='"+filename+"' \n ");
 			carSql.append("WHERE custid="+cust+" \n");
 			carSql.append("AND year="+year+" \n");
 		} else {
-			carSql.append("UPDATE LICENSE \n ");
+			carSql.append("UPDATE license \n ");
 			carSql.append("SET upddate= now() \n");
 			carSql.append(","+col+"='"+filename+"' \n ");
 			carSql.append("WHERE custid="+cust+" \n");

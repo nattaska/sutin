@@ -544,7 +544,13 @@ if(action == null || action.equals("search")){
 		cust.setCustId(custId);
 		cust.setLicense(request.getParameter("slicense"));
 		cust.setProvince(request.getParameter("provinceId")==null?-1:Integer.parseInt(request.getParameter("provinceId")));
-	    Vector entities = queryBean.searchCustomerPage(cust,typeins,month);
+/*		out.write("custId : "+custId);
+		out.write("typeins : "+typeins);
+		out.write("month : "+month);
+		out.write("slicense : "+request.getParameter("slicense"));
+		out.write("provinceId : "+request.getParameter("provinceId")+"</br>");
+		out.write(queryBean.searchCustomerPageString(cust,typeins,month));
+*/		Vector entities = queryBean.searchCustomerPage(cust,typeins,month);
 
 	      for(int i = 0;i < entities.size();i++){
 	          CustomerPage entity = (CustomerPage)entities.elementAt(i);

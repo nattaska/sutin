@@ -10,17 +10,20 @@ import java.util.Vector;
 public class DBControl  {
     //DB Host identification 
     private static final String MYSQL_HOST      = "localhost";
-    private static final String MYSQL_DB        = "insurance";
+//    private static final String MYSQL_USER      = "root";
+//    private static final String MYSQL_PASSWD    = "";
+//    private static final String MYSQL_DB        = "insurance";
 //    private static final String MYSQL_DB        = "machine";
 //    private static final String MYSQL_DB        = "insur";
-    private static final String MYSQL_USER      = "root";
-    private static final String MYSQL_PASSWD    = "";
+    private static final String MYSQL_DB        = "sutin_insurance";
+    private static final String MYSQL_USER      = "sutin_insurance";
+    private static final String MYSQL_PASSWD    = "krungsutin";
     private static final String MYSQL_PORT      = "3306";
     private String msg;
     
-    private String driver = "org.gjt.mm.mysql.Driver";
+//    private String driver = "org.gjt.mm.mysql.Driver";
     private Connection conn = null;
-//    private String driver = "com.mysql.jdbc.Driver";
+    private String driver = "com.mysql.jdbc.Driver";
     public DBControl() {
         
     }
@@ -32,7 +35,9 @@ public class DBControl  {
 //            System.out.println("jdbc:mysql://" + MYSQL_HOST + ":" + MYSQL_PORT + "/" + MYSQL_DB +
 //            "?user=" + MYSQL_USER + "&password=" + MYSQL_PASSWD);
             conn = DriverManager.getConnection("jdbc:mysql://" + MYSQL_HOST + ":" + MYSQL_PORT + "/" + MYSQL_DB +
-            "?user=" + MYSQL_USER + "&password=" + MYSQL_PASSWD);
+            "?user=" + MYSQL_USER + "&password=" + MYSQL_PASSWD +
+            "&useUnicode=true&characterEncoding=utf8&characterSetResults=utf8");
+//            conn = DriverManager.getConnection("jdbc:mysql://" + MYSQL_HOST + ":" + MYSQL_PORT + "/" + MYSQL_DB,MYSQL_USER,MYSQL_PASSWD);
             
         }catch(ClassNotFoundException cnfe){
             cnfe.printStackTrace();

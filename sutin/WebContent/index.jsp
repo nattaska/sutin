@@ -7,7 +7,7 @@
 </jsp:useBean> 
 <%
 if(!userBean.authenticated()){
-    response.sendRedirect("login.jsp?url=index.jsp");
+    response.sendRedirect(request.getScheme() + "://" + request.getServerName() + ":8080/sutin/" + "login.jsp?url=index.jsp");
 }
 %>
 <%-------------------------%>

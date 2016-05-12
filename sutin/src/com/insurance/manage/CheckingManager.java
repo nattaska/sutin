@@ -208,7 +208,7 @@ public class CheckingManager extends DBControl {
 	
 	public String deleteChecked(String license)
 	{
-		String sql = "DELETE FROM CHECKING WHERE license = '"+StringUtil.Unicode2ASCII(license)+"' \n";
+		String sql = "DELETE FROM checking WHERE license = '"+StringUtil.Unicode2ASCII(license)+"' \n";
 		System.out.println(sql);
 		
 		Connection conn = null;
