@@ -364,7 +364,7 @@ if(action == null || action.equals("search")){
                             <tr class="lineborder"> 
                               <td align="right" nowrap><font face="Microsoft Sans Serif">วันตรวจ </font></td>
                               <td><input type="text" size="10" value="" class="disabletext" readonly name="cerdate" id="cerdate" onfocus="displayCalendar(document.adddataform.cerdate,'dd/mm/yyyy',this)"></td>
-                              <td align="right" nowrap><font face="Microsoft Sans Serif">วันจดทะเบียน</td>
+                              <td align="right" nowrap><font face="Microsoft Sans Serif">วันจดทะเบียน</font></td>
                               <td><input type="text" size="10" value="" class="disabletext" readonly name="regisdate" id="regisdate" onfocus="displayCalendar(document.adddataform.regisdate,'dd/mm/yyyy',this)"></td>
                             </tr>
                             <tr class="lineborder"> 
@@ -510,19 +510,19 @@ if(action == null || action.equals("search")){
                             <tr class="lineborder"> 
                               <td align="right" nowrap><font face="Microsoft Sans Serif">น้ำหนัก </font></td>
                               <td><input name="weight" size="10" type="number" class="number" id="weight" value="" onchange="chkIntDecVal(adddataform.weight,'D')"></td>
-                              <td align="right" nowrap><font face="Microsoft Sans Serif">สูบ</td>
+                              <td align="right" nowrap><font face="Microsoft Sans Serif">สูบ</font></td>
                               <td><input name="pump" type="number" class="number" id="pump" size="10" maxlength="2" value="" onchange="chkIntDecVal(adddataform.pump,'N')"> </td>
                             </tr>
                             <tr class="lineborder"> 
                               <td align="right" nowrap><font face="Microsoft Sans Serif">ซีซี </font></td>
                               <td><input name="cc" size="10" maxlength="5" type="number" class="number" id="cc" value="" onchange="chkIntDecVal(adddataform.cc,'N')"></td>
-                              <td align="right" nowrap><font face="Microsoft Sans Serif">เพลา</td>
+                              <td align="right" nowrap><font face="Microsoft Sans Serif">เพลา</font></td>
                               <td><input name="axle" type="number" class="number" id="axle" size="10" maxlength="2" value="" onchange="chkIntDecVal(adddataform.axle,'N')"> </td>
                             </tr>
                             <tr class="lineborder"> 
                               <td align="right" nowrap><font face="Microsoft Sans Serif">ล้อ </font></td>
                               <td><input name="wheel" size="10" maxlength="2" type="number" class="number" id="wheel" value="" onchange="chkIntDecVal(adddataform.wheel,'N')"></td>
-                              <td align="right" nowrap><font face="Microsoft Sans Serif">ยาง</td>
+                              <td align="right" nowrap><font face="Microsoft Sans Serif">ยาง</font></td>
                               <td><input name="tire" type="number" class="number" id="tire" size="10" maxlength="2" value="" onchange="chkIntDecVal(adddataform.tire,'N')"> </td>
                             </tr>
                             <tr class="lineborder"> 
@@ -760,19 +760,19 @@ if(action == null || action.equals("search")){
                             <tr class="lineborder"> 
                               <td align="right" nowrap><font face="Microsoft Sans Serif">น้ำหนัก </font></td>
                               <td><input name="weight" size="10" type="number" class="number" id="weight" value="<%= cEntity.getWeight()==-1?"":cEntity.getWeight() %>" onchange="chkIntDecVal(editdataform.weight,'D')"></td>
-                              <td align="right" nowrap><font face="Microsoft Sans Serif">สูบ</td>
+                              <td align="right" nowrap><font face="Microsoft Sans Serif">สูบ</font></td>
                               <td><input name="pump" type="number" class="number" id="pump" size="10" maxlength="2" value="<%= cEntity.getPump()==-1?"":cEntity.getPump() %>" onchange="chkIntDecVal(editdataform.pump,'N')"> </td>
                             </tr>
                             <tr class="lineborder"> 
                               <td align="right" nowrap><font face="Microsoft Sans Serif">ซีซี </font></td>
                               <td><input name="cc" size="10" maxlength="5" type="number" class="number" id="cc" value="<%= cEntity.getCc()==-1?"":cEntity.getCc() %>" onchange="chkIntDecVal(editdataform.cc,'N')"></td>
-                              <td align="right" nowrap><font face="Microsoft Sans Serif">เพลา</td>
+                              <td align="right" nowrap><font face="Microsoft Sans Serif">เพลา</font></td>
                               <td><input name="axle" type="number" class="number" id="axle" size="10" maxlength="2" value="<%= cEntity.getAxle()==-1?"":cEntity.getAxle() %>" onchange="chkIntDecVal(editdataform.axle,'N')"> </td>
                             </tr>
                             <tr class="lineborder"> 
                               <td align="right" nowrap><font face="Microsoft Sans Serif">ล้อ </font></td>
                               <td><input name="wheel" size="10" maxlength="2" type="number" class="number" id="wheel" value="<%= cEntity.getWheel()==-1?"":cEntity.getWheel() %>" onchange="chkIntDecVal(editdataform.wheel,'N')"></td>
-                              <td align="right" nowrap><font face="Microsoft Sans Serif">ยาง</td>
+                              <td align="right" nowrap><font face="Microsoft Sans Serif">ยาง</font></td>
                               <td><input name="tire" type="number" class="number" id="tire" size="10" maxlength="2" value="<%= cEntity.getTire()==-1?"":cEntity.getTire() %>" onchange="chkIntDecVal(editdataform.tire,'N')"> </td>
                             </tr>
                             <tr class="lineborder"> 
