@@ -35,7 +35,8 @@ String subaction = request.getParameter("subaction");
 <script type='text/javascript' src='../script/dhtmlgoodies_calendar.js'></script>
 <body onLoad="MM_preloadImages('../images/help_f2.gif')">
 <%
-
+String reportLogo = getServletConfig().getServletContext().getRealPath("/")+"/images/sutin-logo.gif";
+out.write(reportLogo);
 System.out.println("action ===> "+action+"\tsubaction ===> "+subaction);
 String msg = null;
 	if(msg != null){
@@ -170,6 +171,7 @@ if(action == null || action.equals("search")){
                             <tr>
                               <td colspan="3" align="center" > <input name="submitsearch" type="submit" class="button" id="submitsearch" value="ค้นหา"> 
                                 <input name="action" type="hidden" id="action" value="search">
+                                <input name="reportLogo" type="hidden" id="reportLogo" value="<%=reportLogo%>">
                               </td>
                             </tr>
                             <tr>

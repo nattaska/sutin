@@ -37,6 +37,7 @@
 	<parameter name="EDATE" isForPrompting="true" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["15"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="reportLogo" isForPrompting="false" class="java.lang.String"/>
 	<queryString><![CDATA[select c.custid,concat(ifnull(getParName(3,c.prefix),''),c.name) name,
        address,ifnull(getParName(1,c.province),'') provincename, zipcode
 from customer c,license l
@@ -65,7 +66,11 @@ order by substr(l.vatmonth,4,2),l.license,c.name,vatmonth]]></queryString>
 						width="139"
 						height="27"
 						key="staticText-1"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font reportFont="Angsana New 20"/>
 					</textElement>
@@ -78,9 +83,13 @@ order by substr(l.vatmonth,4,2),l.license,c.name,vatmonth]]></queryString>
 						width="97"
 						height="97"
 						key="image-1"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<graphicElement stretchType="NoStretch"/>
-					<imageExpression class="java.lang.String"><![CDATA["C:\\iReport-2.0.4\\sutin-logo.gif"]]></imageExpression>
+					<imageExpression class="java.lang.String"><![CDATA[$P{reportLogo}]]></imageExpression>
 				</image>
 				<staticText>
 					<reportElement
@@ -89,7 +98,11 @@ order by substr(l.vatmonth,4,2),l.license,c.name,vatmonth]]></queryString>
 						width="150"
 						height="29"
 						key="staticText-2"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font reportFont="Angsana New 20" isBold="true"/>
 					</textElement>
@@ -102,7 +115,11 @@ order by substr(l.vatmonth,4,2),l.license,c.name,vatmonth]]></queryString>
 						width="139"
 						height="32"
 						key="staticText-3"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font reportFont="Angsana New 20"/>
 					</textElement>
@@ -115,7 +132,11 @@ order by substr(l.vatmonth,4,2),l.license,c.name,vatmonth]]></queryString>
 						width="139"
 						height="30"
 						key="staticText-4"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font reportFont="Angsana New 20"/>
 					</textElement>
@@ -153,7 +174,11 @@ order by substr(l.vatmonth,4,2),l.license,c.name,vatmonth]]></queryString>
 						width="270"
 						height="25"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font reportFont="Angsana New 20"/>
 					</textElement>
@@ -166,7 +191,11 @@ order by substr(l.vatmonth,4,2),l.license,c.name,vatmonth]]></queryString>
 						width="270"
 						height="50"
 						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font reportFont="Angsana New 20"/>
 					</textElement>
@@ -176,10 +205,14 @@ order by substr(l.vatmonth,4,2),l.license,c.name,vatmonth]]></queryString>
 					<reportElement
 						x="150"
 						y="83"
-						width="120"
+						width="270"
 						height="25"
 						key="textField-1"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font reportFont="Angsana New 20"/>
 					</textElement>
@@ -187,12 +220,16 @@ order by substr(l.vatmonth,4,2),l.license,c.name,vatmonth]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="273"
-						y="83"
+						x="150"
+						y="108"
 						width="112"
 						height="25"
 						key="textField-2"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement>
 						<font reportFont="Angsana New 20"/>
 					</textElement>

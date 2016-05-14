@@ -29,11 +29,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
-//import net.sf.jasperreports.engine.JasperReport;
-//import net.sf.jasperreports.engine.export.JRHtmlExporter;
-//import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRRtfExporter;
-//import net.sf.jasperreports.engine.export.JRXlsExporter;
 
 public class ReportControl extends HttpServlet {
 	private static final long serialVersionUID = -4925365588748192994L;
@@ -51,37 +47,6 @@ public class ReportControl extends HttpServlet {
         
     }
 	
-//	private void generateHtmlOutput(JasperPrint jasperPrint,HttpServletRequest req,HttpServletResponse response, Connection conn ) throws IOException, JRException {
-//         JRHtmlExporter exporter = new JRHtmlExporter();
-//         exporter.setParameter( JRExporterParameter.JASPER_PRINT, jasperPrint );
-//         exporter.setParameter( JRExporterParameter.OUTPUT_WRITER,response.getWriter() );
-//         exporter.exportReport();
-//	}
-//	
-//	private void generateExcelOutput(
-//	     HttpServletResponse response,
-//	     Map parameters,
-//	     JasperReport jasperReport, JasperPrint jasperPrint, Connection conn ) throws JRException, NamingException, SQLException, IOException {
-//
-//	   byte[] bytes = null;
-//	   JRXlsExporter exporter = new JRXlsExporter();
-//	   ByteArrayOutputStream xlsReport = new ByteArrayOutputStream();
-//	   exporter.setParameter( JRExporterParameter.JASPER_PRINT, jasperPrint );
-//	   exporter.setParameter( JRExporterParameter.OUTPUT_STREAM, xlsReport );
-//	   exporter.setParameter( JRExporterParameter.OUTPUT_FILE_NAME, "sample.xls" );
-//	   exporter.exportReport();
-//
-//	   bytes = xlsReport.toByteArray();
-//
-//	   response.setContentType( "application/vnd.ms-excel" );
-//	   response.setContentLength( bytes.length );
-//	   ServletOutputStream ouputStream = response.getOutputStream();
-//	   ouputStream.write( bytes, 0, bytes.length );
-//	   ouputStream.flush();
-//	   ouputStream.close();
-//
-//	 }
-	
 	private Map mapParameters(HttpServletRequest request) {
 		Map<String, Comparable> parameters = new HashMap<String, Comparable>();
 //	    parameters.put("month",request.getParameter("month"));
@@ -89,50 +54,14 @@ public class ReportControl extends HttpServlet {
 	    parameters.put("EDATE",request.getParameter("edate"));
 	    parameters.put("provinceId",new Integer(request.getParameter("provinceId")));
 	    file = request.getParameter("typeins");
+	    if (file.contains("Letter")) {
+//	    	String reportLogo = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/images/sutin-logo.gif");
+	    	String reportLogo = getServletConfig().getServletContext().getRealPath("/")+"/images/sutin-logo.gif";
+	    	parameters.put("reportLogo", reportLogo);
+	    }
 	   return parameters;
 		
 	}
-	
-//	private void generatePDFOutput(HttpServletRequest request, HttpServletResponse response ) throws JRException, NamingException, SQLException, IOException, ServletException {
-//
-//	    Connection conn; 
-//    	InputStream in;
-//    	JasperPrint jasperPrint;
-//		Map params = this.mapParameters(request);
-//		System.out.println("Province : "+params.get("provinceId")+"\tDate : "+
-//							params.get("SDATE")+"/"+params.get("month")+"-"+
-//							params.get("EDATE")+"/"+params.get("month")+"\tFile : "+file);
-//		System.out.println();
-//		if (params == null) {
-//	           request.setAttribute("url", "pages/service/CustomerListRP.jsp");
-//	           request.setAttribute("msg", "!!!Please Select Report Type !!!");
-//	           getServletConfig().getServletContext().getRequestDispatcher("/output.jsp").forward(request, response);			
-//		} else {
-//			conn = new DBControl().getConnection(); 
-//			in = request.getSession().getServletContext().getResourceAsStream(this.pathFile+file+".jasper");
-//			jasperPrint = JasperFillManager.fillReport(in, params, conn);
-//			
-//			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//			JRPdfExporter exporter = new JRPdfExporter();
-//	        exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-//	        exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
-//	        exporter.exportReport();
-//	        
-//	        response.setContentType("application/pdf");
-//	        Calendar calendar = Calendar.getInstance();
-//	    	DateFormat df = new SimpleDateFormat("yyyyMMddHHmm");
-//	    	String fileName = file + df.format(calendar.getTime()) + ".pdf";
-//	        response.setHeader("Content-disposition", "attachment; filename=" + fileName);
-//	        ServletOutputStream out = response.getOutputStream();
-//
-//	        byte[]   output=  baos.toByteArray();
-//	        out.write(output);
-//	        out.flush();
-//	        out.close();
-//			
-//		}
-//
-//	}
 	
 	private void generateRTFOutput(HttpServletRequest request, HttpServletResponse response ) throws JRException, NamingException, SQLException, IOException, ServletException {
 
