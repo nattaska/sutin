@@ -37,6 +37,7 @@
 	<parameter name="EDATE" isForPrompting="true" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["15"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="reportLogo" isForPrompting="false" class="java.lang.String"/>
 	<queryString><![CDATA[select c.custid,concat(ifnull(getParName(3,c.prefix),''),c.name) name,
        address,ifnull(getParName(1,c.province),'') provincename, zipcode
 from customer c,fire f
@@ -88,7 +89,7 @@ order by substr(f.fmonth,4,2),c.name]]></queryString>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 </box>
 					<graphicElement stretchType="NoStretch"/>
-					<imageExpression class="java.lang.String"><![CDATA["/images/sutin-logo.gif"]]></imageExpression>
+					<imageExpression class="java.lang.String"><![CDATA[$P{reportLogo}]]></imageExpression>
 				</image>
 				<staticText>
 					<reportElement

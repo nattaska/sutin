@@ -36,7 +36,7 @@ String subaction = request.getParameter("subaction");
 <body onLoad="MM_preloadImages('../images/help_f2.gif')">
 <%
 String reportLogo = getServletConfig().getServletContext().getRealPath("/")+"/images/sutin-logo.gif";
-out.write(reportLogo);
+//out.write(reportLogo);
 System.out.println("action ===> "+action+"\tsubaction ===> "+subaction);
 String msg = null;
 	if(msg != null){
