@@ -205,7 +205,7 @@ order by substr(l.lifemonth,4,2),c.name]]></queryString>
 					<reportElement
 						x="150"
 						y="83"
-						width="120"
+						width="270"
 						height="25"
 						key="textField-5"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -220,8 +220,8 @@ order by substr(l.lifemonth,4,2),c.name]]></queryString>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="273"
-						y="83"
+						x="150"
+						y="108"
 						width="112"
 						height="25"
 						key="textField-6"/>

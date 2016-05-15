@@ -240,7 +240,7 @@ order by substr(l.carmonth,4,2),l.license,c.name,carmonth]]></queryString>
 						style="Angsana New 20"
 						x="150"
 						y="83"
-						width="120"
+						width="270"
 						height="25"
 						key="textField-3"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -256,8 +256,8 @@ order by substr(l.carmonth,4,2),l.license,c.name,carmonth]]></queryString>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Angsana New 20"
-						x="273"
-						y="83"
+						x="150"
+						y="108"
 						width="112"
 						height="25"
 						key="textField-4"/>
