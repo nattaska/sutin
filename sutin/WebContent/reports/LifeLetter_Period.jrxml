@@ -63,7 +63,7 @@ order by substr(l.lifemonth,4,2),c.name]]></queryString>
 					<reportElement
 						x="102"
 						y="24"
-						width="139"
+						width="250"
 						height="27"
 						key="staticText-1"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -95,7 +95,7 @@ order by substr(l.lifemonth,4,2),c.name]]></queryString>
 					<reportElement
 						x="102"
 						y="-1"
-						width="150"
+						width="250"
 						height="29"
 						key="staticText-2"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -112,7 +112,7 @@ order by substr(l.lifemonth,4,2),c.name]]></queryString>
 					<reportElement
 						x="102"
 						y="59"
-						width="139"
+						width="250"
 						height="32"
 						key="staticText-3"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -129,7 +129,7 @@ order by substr(l.lifemonth,4,2),c.name]]></queryString>
 					<reportElement
 						x="102"
 						y="42"
-						width="139"
+						width="250"
 						height="30"
 						key="staticText-4"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

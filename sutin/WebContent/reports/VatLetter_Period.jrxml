@@ -63,7 +63,7 @@ order by substr(l.vatmonth,4,2),l.license,c.name,vatmonth]]></queryString>
 					<reportElement
 						x="102"
 						y="23"
-						width="139"
+						width="250"
 						height="27"
 						key="staticText-1"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -95,7 +95,7 @@ order by substr(l.vatmonth,4,2),l.license,c.name,vatmonth]]></queryString>
 					<reportElement
 						x="102"
 						y="-2"
-						width="150"
+						width="250"
 						height="29"
 						key="staticText-2"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -112,7 +112,7 @@ order by substr(l.vatmonth,4,2),l.license,c.name,vatmonth]]></queryString>
 					<reportElement
 						x="102"
 						y="58"
-						width="139"
+						width="250"
 						height="32"
 						key="staticText-3"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -129,7 +129,7 @@ order by substr(l.vatmonth,4,2),l.license,c.name,vatmonth]]></queryString>
 					<reportElement
 						x="102"
 						y="41"
-						width="139"
+						width="250"
 						height="30"
 						key="staticText-4"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
