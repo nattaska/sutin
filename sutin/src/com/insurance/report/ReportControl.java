@@ -56,8 +56,8 @@ public class ReportControl extends HttpServlet {
 	    file = request.getParameter("typeins");
 	    if (file.contains("Letter")) {
 //	    	String reportLogo = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/images/sutin-logo.gif");
-	    	String reportLogo = getServletConfig().getServletContext().getRealPath("/")+"/images/sutin-logo.gif";
-	    	parameters.put("reportLogo", reportLogo);
+//	    	String reportLogo = getServletConfig().getServletContext().getRealPath("/")+"/images/sutin-logo.gif";
+	    	parameters.put("reportLogo", request.getParameter("reportLogo"));
 	    }
 	   return parameters;
 		
